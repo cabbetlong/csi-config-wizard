@@ -1,0 +1,45 @@
+{
+  "skill_name": "csi-config-wizard",
+  "evals": [
+    {
+      "id": 1,
+      "name": "url-https-only",
+      "prompt": "把存储后端步骤里「存储管理地址」的校验改为只允许 https（当前同时允许 http 和 https）。注意 tests/golden.test.js 里已有断言 http 地址可通过校验的用例，需要同步处理测试，改完后 npm test 必须全绿。",
+      "expected_output": "fields.yaml 中 backend.url 的 validate.pattern 只允许 https；相关测试同步更新；npm test 全绿；未改代码。",
+      "files": [],
+      "expectations": [
+        "fields.yaml 中 backend.url 的校验仅允许 https（pattern 以 ^https:// 开头，不再匹配 http）",
+        "测试已同步：不再断言 http 地址可通过校验（tests/golden.test.js 中 http 用例已更新为被拒绝或移除）",
+        "未改动 src/ 下的代码（仅 public/config 与 tests 文件变化）",
+        "npm test 全绿（test.log 显示所有测试文件通过）"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "sc-iopriority",
+      "prompt": "在「存储类」步骤新增一个高级参数 ioPriority（IO 优先级，文本输入，只对块服务显示），并让它输出到生成的 StorageClass 的 parameters.ioPriority。补上中英文 label 与帮助文案。改完后 npm test 必须全绿，并在 summary 里给出块服务与文件服务两种场景下的 StorageClass 渲染结果片段。",
+      "expected_output": "fields.yaml 新增 id: sc.ioPriority（label 双语、level advanced、visible_when 块服务）；templates/storageclass.yaml 的 parameters 段新增 ioPriority 占位符；npm test 全绿；summary 含块/文件两种渲染结果。",
+      "files": [],
+      "expectations": [
+        "fields.yaml 新增 id: sc.ioPriority（type: text、level: advanced、含 label_zh 与 label_en）",
+        "sc.ioPriority 的 visible_when 限定块服务（{state: serviceType, eq: block} 或 in: [block]）",
+        "storageclass.yaml 模板在 parameters 段输出 ioPriority（带 {{#if sc.ioPriority}} 包裹的占位符）",
+        "summary 中块服务的 StorageClass 渲染结果包含 ioPriority 行",
+        "summary 中文件服务的 StorageClass 渲染结果不包含 ioPriority",
+        "npm test 全绿（test.log 显示所有测试文件通过）"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "pitfall-nvmetcp",
+      "prompt": "在部署自检清单（public/config/pitfalls.yaml）里新增一条：当后端协议为 nvme-tcp（NVMe over TCP）时提示「主机需安装 nvme-cli ≥ 2.0，否则卷挂载会失败」（仅在该协议下显示）。注意先检查是否与现有条目重复。改完后 npm test 必须全绿。",
+      "expected_output": "pitfalls.yaml 新增条目（id、artifact、when: 协议为 nvme-tcp、text_zh/text_en）；无重复；npm test 全绿。",
+      "files": [],
+      "expectations": [
+        "pitfalls.yaml 新增条目（id 不与现有 14 条重复），when 条件限定协议为 nvme-tcp",
+        "新条目含 text_zh（提到 nvme-cli）与 text_en",
+        "npm test 全绿（test.log 显示所有测试文件通过）"
+      ]
+    }
+  ]
+}
