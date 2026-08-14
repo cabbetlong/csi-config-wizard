@@ -361,20 +361,20 @@ textarea:focus {
 .btn.primary:active {
   background: var(--doc-red-active);
 }
-/* Docsy btn-secondary：#ffa630 橙底黑字（对应文档站"下载"按钮） */
+/* 次级动作按钮（上一步 / 下载）：与主按钮同色 #c7000b */
 .btn.secondary {
-  background: #ffa630;
-  border-color: #ffa630;
-  color: #000;
+  background: var(--doc-red);
+  border-color: var(--doc-red);
+  color: #fff;
   font-weight: 600;
 }
 .btn.secondary:hover {
-  background: #ffb34f;
-  border-color: #ffaf45;
-  color: #000;
+  background: var(--doc-red-hover);
+  border-color: var(--doc-red-hover);
+  color: #fff;
 }
 .btn.secondary:active {
-  background: #ffb859;
+  background: var(--doc-red-active);
 }
 .btn.ghost {
   background: transparent;
