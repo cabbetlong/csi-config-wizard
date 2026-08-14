@@ -358,6 +358,21 @@ textarea:focus {
 .btn.primary:active {
   background: var(--doc-primary-active);
 }
+/* Docsy btn-secondary：#ffa630 橙底黑字（对应文档站"下载"按钮） */
+.btn.secondary {
+  background: #ffa630;
+  border-color: #ffa630;
+  color: #000;
+  font-weight: 600;
+}
+.btn.secondary:hover {
+  background: #ffb34f;
+  border-color: #ffaf45;
+  color: #000;
+}
+.btn.secondary:active {
+  background: #ffb859;
+}
 .btn.ghost {
   background: transparent;
 }

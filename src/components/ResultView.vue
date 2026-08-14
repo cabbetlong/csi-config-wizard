@@ -93,7 +93,7 @@ function download(name, text) {
             <button class="btn ghost small" @click="copy(a.fileName, renderFor(a))">
               {{ copied === a.fileName ? t('copied') : t('copy') }}
             </button>
-            <button class="btn ghost small" @click="download(a.fileName, renderFor(a))">{{ t('download') }}</button>
+            <button class="btn secondary small" @click="download(a.fileName, renderFor(a))">{{ t('download') }}</button>
           </div>
           <div v-if="commandsFor(a).length" class="commands">
             <div v-for="(c, ci) in commandsFor(a)" :key="ci" class="cmd-block">

@@ -169,7 +169,7 @@ function prev() {
       <div v-if="hasErrors" class="err-summary">⚠ {{ t('err.summary', { n: Object.keys(errors).length }) }}</div>
 
       <div class="actions">
-        <button class="btn ghost" @click="prev">{{ t('step.back') }}</button>
+        <button class="btn secondary" @click="prev">{{ t('step.back') }}</button>
         <button class="btn primary" @click="next">{{ t('step.next') }}</button>
       </div>
     </div>
@@ -179,7 +179,7 @@ function prev() {
         <span>{{ t('preview.title') }}</span>
         <span class="spacer"></span>
         <button class="btn ghost small" @click="copy">{{ copied ? t('copied') : t('copy') }}</button>
-        <button class="btn ghost small" @click="download">{{ t('download') }}</button>
+        <button class="btn secondary small" @click="download">{{ t('download') }}</button>
       </div>
       <pre class="yaml">{{ previewText }}</pre>
     </div>
