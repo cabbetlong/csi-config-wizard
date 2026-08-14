@@ -51,7 +51,7 @@ describe('App 端到端（组件级）', () => {
     expect(html).toContain('kubeletConfigDir')
   })
 
-  it('步进导航：走完四步到达结果页', async () => {
+  it('步进导航：默认后端已预置，走完四步到达结果页', async () => {
     const wrapper = mount(App)
     await flushPromises()
     await new Promise((r) => setTimeout(r, 30))
@@ -63,13 +63,29 @@ describe('App 端到端（组件级）', () => {
     await wrapper.find('button.primary').trigger('click')
     await flushPromises()
     expect(wrapper.text()).toContain('后端名称')
-    // 添加一个后端
-    await wrapper.find('button.chip.add').trigger('click')
+    // 默认后端已预置（无需点击"添加后端"）
+    expect(wrapper.findAll('button.chip').length).toBeGreaterThanOrEqual(1)
+
+    // 给默认后端配置一个存储池（列表编辑器：加一行 → 输入）
+    const poolField = wrapper.findAll('.field').find((f) => f.text().includes('存储池'))
+    expect(poolField).toBeTruthy()
+    await poolField.find('button').trigger('click') // 添加行
     await flushPromises()
-    // Step2 → Step3（存储类）
+    const poolInput = poolField.find('input')
+    await poolInput.setValue('Pool001')
+    await flushPromises()
+
+    // Step2 → Step3（存储类）：存储池应为下拉框且选项来自所选后端
     await wrapper.find('button.primary').trigger('click')
     await flushPromises()
     expect(wrapper.text()).toContain('存储类名称')
+    const poolSelect = wrapper
+      .findAll('.field')
+      .find((f) => f.text().includes('存储池'))
+      .find('select')
+    expect(poolSelect).toBeTruthy()
+    expect(poolSelect.text()).toContain('Pool001')
+
     // Step3 → Step4（PVC）
     await wrapper.find('button.primary').trigger('click')
     await flushPromises()

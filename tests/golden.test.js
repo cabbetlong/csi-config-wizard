@@ -53,8 +53,7 @@ function loadConfigFromDisk() {
 
 function makeStore() {
   const store = createStore(loadConfigFromDisk())
-  // 场景默认：flash / block / iscsi / k8s
-  store.addBackend()
+  // 场景默认：flash / block / iscsi / k8s；默认后端已由 store 预置（backend[0]）
   store.setField('backend.name', 'backend-demo')
   store.setField('backend.url', 'https://192.168.1.10:8088')
   store.setField('backend.pools', ['Pool001', 'Pool002'])
@@ -232,5 +231,28 @@ describe('校验器', () => {
     const ids = errors.map((e) => e.fieldId)
     expect(ids).toContain('backend.url') // 格式
     expect(ids).toContain('pvc.storage') // 格式（缺单位）
+  })
+
+  it('存储地址支持 http/https（拒绝其他协议）', async () => {
+    const { validateAllFields } = await import('../src/engine/validator.js')
+    const s2 = makeStore()
+    s2.setField('backend.url', 'http://192.168.1.10:8088')
+    const errors = validateAllFields(s2.config, s2.buildCtx())
+    expect(errors.map((e) => e.fieldId)).not.toContain('backend.url')
+    s2.setField('backend.url', 'ftp://x')
+    const errors2 = validateAllFields(s2.config, s2.buildCtx())
+    expect(errors2.map((e) => e.fieldId)).toContain('backend.url')
+  })
+
+  it('存储池选项来自所选后端；切换后端后存储池重置', () => {
+    const store = makeStore()
+    expect(store.backendPools()).toEqual(['Pool001', 'Pool002'])
+    store.setField('sc.pool', 'Pool001')
+    store.addBackend()
+    store.setField('backend.name', 'b2')
+    store.setField('backend.pools', ['PoolA'])
+    store.setField('sc.backend', 'b2')
+    expect(store.backendPools()).toEqual(['PoolA'])
+    expect(store.state.sc.pool).toBeUndefined() // 重置为未选
   })
 })

@@ -44,7 +44,7 @@ const fieldSchema = {
     default: {},
     level: { enum: ['basic', 'advanced'] },
     options: { type: 'array', items: { type: 'string' } },
-    options_from: { enum: ['family.protocols', 'state.backends'] },
+    options_from: { enum: ['family.protocols', 'state.backends', 'state.backendPools'] },
     item: { type: 'object', properties: { type: { type: 'string' }, validate: { type: 'object' } }, additionalProperties: true },
     validate: {
       type: 'object',

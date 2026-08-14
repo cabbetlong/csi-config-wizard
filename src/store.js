@@ -64,6 +64,9 @@ export function createStore(config) {
   // 应用字段默认值（仅对当前可见的字段；visibility 由 buildCtx 判定）
   applyFieldDefaults()
 
+  // 优化：默认预置一个后端，进入存储后端步骤即可直接配置（无需先点"添加"）
+  if (!state.backends.length) addBackend()
+
   function applyFieldDefaults() {
     const ctx = buildCtx()
     for (const f of config.fields) {
@@ -164,8 +167,11 @@ export function createStore(config) {
     const { artifact, key } = artifactKey(id)
     if (artifact === 'scenario') state.scenario[key] = value
     else if (artifact === 'helm') state.helm[key] = value
-    else if (artifact === 'sc') state.sc[key] = value
-    else if (artifact === 'pvc') state.pvc[key] = value
+    else if (artifact === 'sc') {
+      state.sc[key] = value
+      // 优化：切换关联后端后，存储池属于旧后端，重置为未选（自动选择）
+      if (key === 'backend') state.sc.pool = undefined
+    } else if (artifact === 'pvc') state.pvc[key] = value
     else if (artifact === 'backend' && state.backends[state.activeBackend]) {
       state.backends[state.activeBackend][key] = value
     }
@@ -292,6 +298,14 @@ export function createStore(config) {
   }
 
   // ---------- 场景选项 ----------
+  // 存储类步骤：存储池选项来自所选后端（优化 3）
+  function backendPools() {
+    const name = state.sc.backend
+    const b =
+      state.backends.find((x) => x.name === name) ?? state.backends[state.activeBackend]
+    return b?.pools ?? []
+  }
+
   function serviceOptions() {
     const fam = config.families.find((f) => f.id === state.scenario.familyId)
     return fam
@@ -323,6 +337,7 @@ export function createStore(config) {
     setPlatform,
     addBackend,
     removeBackend,
+    backendPools,
     renderArtifact,
     renderCommands,
     artifacts,

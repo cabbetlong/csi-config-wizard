@@ -130,7 +130,9 @@ fields:
     level: basic
     placeholder_zh: https://192.168.1.10:8088
     placeholder_en: https://192.168.1.10:8088
-    validate: {pattern: "^https://\\S+$"}
+    validate: {pattern: "^https?://\\S+$"}
+    help_zh: 支持 http 或 https（如 https://192.168.1.10:8088）
+    help_en: Supports http or https (e.g. https://192.168.1.10:8088)
   - id: backend.pools
     label_zh: 存储池
     label_en: Storage Pools
@@ -211,10 +213,11 @@ fields:
   - id: sc.pool
     label_zh: 存储池
     label_en: Pool
-    type: text
+    type: select
+    options_from: state.backendPools
     level: basic
-    help_zh: 不填则 CSI 自动选择剩余容量最大的池
-    help_en: Leave empty to let CSI pick the pool with most free capacity
+    help_zh: 不选则 CSI 自动选择剩余容量最大的池；列表来自"关联后端"已配置的存储池
+    help_en: Leave empty to let CSI pick the pool with most free capacity; options come from the selected backend
   - id: sc.allocType
     label_zh: 分配类型
     label_en: Allocation Type

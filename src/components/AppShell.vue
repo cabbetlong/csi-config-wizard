@@ -33,17 +33,19 @@ function toggleLang() {
 
 <template>
   <div class="shell">
-    <header class="topbar">
-      <div class="brand">
-        <span class="logo">▣</span>
-        <div>
-          <h1>{{ t('app.title') }}</h1>
-          <p class="muted">{{ t('app.subtitle') }}</p>
+    <header class="navbar">
+      <div class="navbar-inner">
+        <div class="brand">
+          <span class="logo">▣</span>
+          <div>
+            <h1>{{ t('app.title') }}</h1>
+            <p class="navbar-sub">{{ t('app.subtitle') }}</p>
+          </div>
         </div>
-      </div>
-      <div class="topbar-right">
-        <span class="badge">CSI {{ store.config.meta.version }}</span>
-        <button class="btn ghost" @click="toggleLang">{{ t('lang.switch') }}</button>
+        <div class="navbar-right">
+          <span class="badge badge-dark">CSI {{ store.config.meta.version }}</span>
+          <button class="btn navbar-btn" @click="toggleLang">{{ t('lang.switch') }}</button>
+        </div>
       </div>
     </header>
 

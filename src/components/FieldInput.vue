@@ -26,6 +26,9 @@ const options = computed(() => {
       label: b.name || t('result.noBackends'),
     }))
   }
+  if (f.options_from === 'state.backendPools') {
+    return props.store.backendPools().map((p) => ({ value: p, label: p }))
+  }
   return []
 })
 
