@@ -10,6 +10,9 @@
   --doc-primary: #30638e;
   --doc-primary-hover: #295479;
   --doc-primary-active: #264f72;
+  --doc-red: #c7000b;
+  --doc-red-hover: #b00009;
+  --doc-red-active: #99000a;
   --doc-link: #0d6efd;
   --doc-link-hover: #094db1;
   --doc-navbar: #403f4c;
@@ -162,8 +165,8 @@ a:hover {
   color: var(--doc-primary);
 }
 .step.active {
-  background: var(--doc-primary);
-  border-color: var(--doc-primary);
+  background: var(--doc-red);
+  border-color: var(--doc-red);
   color: #fff;
   font-weight: 600;
 }
@@ -345,18 +348,18 @@ textarea:focus {
   color: var(--doc-primary);
 }
 .btn.primary {
-  background: var(--doc-primary);
-  border-color: var(--doc-primary);
+  background: var(--doc-red);
+  border-color: var(--doc-red);
   color: #fff;
   font-weight: 600;
 }
 .btn.primary:hover {
-  background: var(--doc-primary-hover);
-  border-color: var(--doc-primary-hover);
+  background: var(--doc-red-hover);
+  border-color: var(--doc-red-hover);
   color: #fff;
 }
 .btn.primary:active {
-  background: var(--doc-primary-active);
+  background: var(--doc-red-active);
 }
 /* Docsy btn-secondary：#ffa630 橙底黑字（对应文档站"下载"按钮） */
 .btn.secondary {
