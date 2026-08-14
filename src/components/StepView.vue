@@ -55,11 +55,15 @@ const errors = computed(() => {
 
 const hasErrors = computed(() => Object.keys(errors.value).length > 0)
 
-// 当前生效的字段（visible_when 为真；backend 步骤以当前活动后端为上下文）
-function activeFields(list) {
+// 当前生效的字段（visible_when 为真；backend 步骤以当前活动后端为上下文）。
+// 注意：模板里 ref/computed 会自动解包，这里用 computed 持有过滤结果，避免把
+// computed 当数组传给函数（list.value 会变 undefined）。
+function filterVisible(fields) {
   const ctx = props.store.buildCtx()
-  return list.value.filter((f) => !f.visible_when || evalCondition(f.visible_when, ctx))
+  return fields.filter((f) => !f.visible_when || evalCondition(f.visible_when, ctx))
 }
+const visibleBasicFields = computed(() => filterVisible(basicFields.value))
+const visibleAdvancedFields = computed(() => filterVisible(advancedFields.value))
 
 // 后端多卡片
 const isMulti = computed(() => !!props.step.multi)
@@ -137,7 +141,7 @@ function prev() {
 
       <div class="fields">
         <FieldInput
-          v-for="f in activeFields(basicFields)"
+          v-for="f in visibleBasicFields"
           :key="f.id"
           :store="store"
           :field="f"
@@ -151,7 +155,7 @@ function prev() {
         <summary>{{ t('advanced.toggle') }}</summary>
         <div class="fields">
           <FieldInput
-            v-for="f in activeFields(advancedFields)"
+            v-for="f in visibleAdvancedFields"
             :key="f.id"
             :store="store"
             :field="f"
