@@ -17,11 +17,20 @@
 ```bash
 npm install
 npm run dev        # 本地开发 http://localhost:5173
-npm test           # 30 个测试：条件 DSL / 渲染器 / golden 全链路
-npm run build      # 产出纯静态目录 dist/
+npm test           # 36 个测试：条件 DSL / 渲染器 / golden 全链路 / 内嵌快照 / 组件冒烟
+npm run build      # 产出单文件 dist/index.html（自包含，双击即可打开）
 ```
 
-部署：把 `dist/` 整体拷贝到任意静态服务器即可（`base: './'`，可挂任意子路径，如随 css-docs 文档站放在 `/css-docs/wizard/`）。
+部署：把 `dist/` 整体拷贝到任意静态服务器（`base: './'`，可挂任意子路径，如随 css-docs 文档站放在 `/css-docs/wizard/`）。
+
+### 两种打开方式都支持
+
+| 方式 | 配置来源 | 改配置是否需重新构建 |
+|------|---------|-------------------|
+| **双击 `dist/index.html`**（file://） | 构建时内嵌快照 | 需要（重新 `npm run build`） |
+| **HTTP 静态服务**（含文档站部署） | 运行时加载 `config/` 目录 | **不需要**（改 YAML 刷新即生效） |
+
+构建时 `scripts/embed-config.mjs` 会把 `public/config/` 打成内嵌快照，运行时会优先 fetch `config/`，失败（file:// 或服务器缺目录）自动回退快照并给出控制台警告。
 
 ## 配置数据（加配置不改代码）
 

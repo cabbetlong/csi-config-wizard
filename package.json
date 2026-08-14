@@ -6,8 +6,10 @@
   "description": "华为 CSI 配置向导 —— 引导生成 helm-values / backend / StorageClass / PVC YAML",
   "scripts": {
     "dev": "vite",
+    "prebuild": "node scripts/embed-config.mjs",
     "build": "vite build",
     "preview": "vite preview",
+    "pretest": "node scripts/embed-config.mjs",
     "test": "vitest run"
   },
   "dependencies": {
@@ -21,6 +23,7 @@
     "@vue/test-utils": "^2.4.11",
     "jsdom": "^30.0.1",
     "vite": "^6.0.7",
+    "vite-plugin-singlefile": "^2.3.3",
     "vitest": "^2.1.8"
   }
 }

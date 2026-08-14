@@ -1,4 +1,5 @@
 node_modules/
 dist/
+src/config/embedded.mjs
 *.log
 .DS_Store
