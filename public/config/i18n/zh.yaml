@@ -1,0 +1,61 @@
+# 界面文案（Q11=A：字段 label 就近写在 fields.yaml，这里是 UI 通用文案）
+app.title: 华为 CSI 配置向导
+app.subtitle: 引导生成 helm-values / 存储后端 / StorageClass / PVC 配置
+nav.scenario: 场景
+nav.helm: CSI 安装
+nav.backend: 存储后端
+nav.storageclass: 存储类
+nav.pvc: 持久卷声明
+nav.result: 结果
+scenario.title: 配置场景
+scenario.hint: 选择与配置直接相关的场景信息，后续步骤将自动带出推荐值，均可修改。
+scenario.start: 进入向导
+step.back: 上一步
+step.next: 下一步
+backend.add: 添加后端
+backend.remove: 删除
+list.add: 添加
+backend.card: 后端 {n}
+advanced.toggle: 高级选项
+preview.title: 生成预览
+download: 下载
+copy: 复制
+copied: 已复制
+result.title: 部署结果
+result.hint: 按以下顺序执行；每类文件均来自当前配置，可在前序步骤修改后重新生成。
+result.order: 执行顺序
+result.commands: 部署命令
+result.checks: 部署自检清单
+result.cross: 一致性检查（向导自动保持，此处复核）
+result.pass: 通过
+result.fail: 未通过
+result.n/a: 不适用
+result.noBackends: 尚未创建后端，请先在第 2 步添加
+loading: 正在加载配置…
+configError.title: 配置加载失败
+configError.hint: 请检查 public/config/ 下的配置文件。
+lang.switch: English
+err.required: 必填
+err.pattern: 格式不正确
+err.min: 不能小于 {min}
+err.max: 不能大于 {max}
+err.enum: 不在可选范围内
+err.invalidJson: 不是合法的 JSON 字符串
+err.unknownHook: 未知的校验规则
+err.summary: 共 {n} 项待修正
+serviceType.block: 块服务
+serviceType.file: 文件服务
+serviceType.dtree: 文件系统（Dtree）
+protocol.fc: FC
+protocol.iscsi: iSCSI
+protocol.nvme-roce: NVMe over RoCE
+protocol.nvme-fc: NVMe over FC
+protocol.nvme-tcp: NVMe over TCP
+protocol.nfs: NFS
+protocol.nfs+: NFS+
+protocol.dpc: DPC
+protocol.scsi: SCSI
+platform.k8s: Kubernetes
+platform.openshift: OpenShift
+platform.tanzu: Tanzu (TKGI)
+platform.cce: CCE / CCE Agile

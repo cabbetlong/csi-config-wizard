@@ -1,0 +1,13 @@
+# 由华为 CSI 配置向导生成
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: "{{pvc.name}}"
+spec:
+  accessModes:
+    - "{{pvc.accessModes}}"
+  volumeMode: "{{pvc.volumeMode}}"
+  storageClassName: "{{state.scName}}"
+  resources:
+    requests:
+      storage: "{{pvc.storage}}"

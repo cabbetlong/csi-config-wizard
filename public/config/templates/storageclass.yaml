@@ -1,0 +1,37 @@
+# 由华为 CSI 配置向导生成
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: "{{sc.name}}"
+provisioner: "{{helm.driverName}}"
+parameters:
+  backend: "{{sc.backend}}"
+  {{#if sc.pool}}
+  pool: "{{sc.pool}}"
+  {{/if}}
+  volumeType: "{{family.volumeType}}"
+  allocType: "{{sc.allocType}}"
+  {{#if sc.fsType}}
+  fsType: "{{sc.fsType}}"
+  {{/if}}
+  {{#if sc.qos}}
+  qos: {{sc.qos}}
+  {{/if}}
+  {{#if sc.authClient}}
+  authClient: "{{sc.authClient}}"
+  {{/if}}
+  {{#if sc.hyperMetro}}
+  hyperMetro: "{{sc.hyperMetro}}"
+  {{/if}}
+{{#if sc.reclaimPolicy}}
+reclaimPolicy: "{{sc.reclaimPolicy}}"
+{{/if}}
+{{#if sc.allowVolumeExpansion}}
+allowVolumeExpansion: {{sc.allowVolumeExpansion}}
+{{/if}}
+{{#if sc.mountOptions}}
+mountOptions:
+{{#each sc.mountOptions}}
+  - "{{this}}"
+{{/each}}
+{{/if}}

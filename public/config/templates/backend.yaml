@@ -1,0 +1,36 @@
+# 由华为 CSI 配置向导生成（后端：{{backend.name}} · 协议 {{backend.protocol}}）
+# 创建命令：oceanctl create backend -f {{backend.name}}.yaml -i yaml
+storage: "{{family.storage}}"
+name: "{{backend.name}}"
+namespace: "{{helm.namespace}}"
+urls:
+  - "{{backend.url}}"
+pools:
+{{#each backend.pools}}
+  - "{{this}}"
+{{/each}}
+{{#if backend.protocol}}
+parameters:
+  protocol: "{{backend.protocol}}"
+  {{#if backend.portals}}
+  portals:
+  {{#each backend.portals}}
+    - "{{this}}"
+  {{/each}}
+  {{/if}}
+  {{#if backend.scsiHosts}}
+  portals:
+  {{#each backend.scsiHosts}}
+    - "{{this.key}}": "{{this.value}}"
+  {{/each}}
+  {{/if}}
+  {{#if backend.alua}}
+  ALUA: "true"
+  {{/if}}
+{{/if}}
+{{#if backend.maxClientThreads}}
+maxClientThreads: "{{backend.maxClientThreads}}"
+{{/if}}
+{{#if backend.authenticationMode}}
+authenticationMode: "{{backend.authenticationMode}}"
+{{/if}}

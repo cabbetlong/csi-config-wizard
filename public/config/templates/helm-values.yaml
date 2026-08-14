@@ -1,0 +1,75 @@
+# 由华为 CSI 配置向导生成（CSI v4.12.0 · 平台 {{state.platform}}）
+# 保存为 helm/esdk/values.yaml 后执行"部署命令"。
+images:
+  huaweiCSIService: "{{state.imagePrefix}}huawei-csi:4.12.0"
+  storageBackendSidecar: "{{state.imagePrefix}}storage-backend-sidecar:4.12.0"
+  storageBackendController: "{{state.imagePrefix}}storage-backend-controller:4.12.0"
+  sidecar:
+    livenessProbe: "registry.k8s.io/sig-storage/livenessprobe:v2.15.0"
+    provisioner: "registry.k8s.io/sig-storage/csi-provisioner:v5.2.0"
+    attacher: "registry.k8s.io/sig-storage/csi-attacher:v4.8.0"
+    resizer: "registry.k8s.io/sig-storage/csi-resizer:v1.13.2"
+    snapshotter: "registry.k8s.io/sig-storage/csi-snapshotter:v8.2.0"
+    snapshotController: "registry.k8s.io/sig-storage/snapshot-controller:v8.2.0"
+    registrar: "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.13.0"
+    healthMonitorController: "registry.k8s.io/sig-storage/csi-external-health-monitor-controller:v0.17.0"
+controller:
+  controllerCount: {{helm.controllerCount}}
+  volumeNamePrefix: "pvc"
+  webhookPort: "4433"
+  snapshot:
+    enabled: {{helm.snapshotEnabled}}
+  resizer:
+    enabled: true
+    kubeApiQps: 5
+    kubeApiBurst: 10
+node:
+  maxVolumesPerNode: {{helm.maxVolumesPerNode}}
+  kubeletVolumeDevicesDirName: "volumeDevices"
+csiDriver:
+  driverName: "{{helm.driverName}}"
+  endpoint: "/csi/csi.sock"
+  connectorThreads: "{{helm.connectorThreads}}"
+  volumeUseMultipath: {{helm.volumeUseMultipath}}
+  scsiMultipathType: "{{helm.scsiMultipathType}}"
+  nvmeMultipathType: "{{helm.nvmeMultipathType}}"
+  scanVolumeTimeout: "3"
+  execCommandTimeout: "30"
+  enableRoCEConnect: true
+  allPathOnline: false
+  backendUpdateInterval: "60"
+  controllerLogging:
+    module: "file"
+    level: "{{helm.logLevel}}"
+    fileDir: "/var/log/huawei"
+    fileSize: "20M"
+    maxBackups: "9"
+  nodeLogging:
+    module: "file"
+    level: "{{helm.logLevel}}"
+    fileDir: "/var/log/huawei"
+    fileSize: "20M"
+    maxBackups: "9"
+  reportNodeIP: false
+kubernetes:
+  namespace: "{{helm.namespace}}"
+kubeletConfigDir: "{{helm.kubeletConfigDir}}"
+sidecarImagePullPolicy: "IfNotPresent"
+huaweiImagePullPolicy: "IfNotPresent"
+{{#if helm.imagePullSecrets}}
+imagePullSecrets:
+{{#each helm.imagePullSecrets}}
+  - name: "{{this}}"
+{{/each}}
+{{/if}}
+CSIDriverObject:
+  isCreate: false
+  attachRequired: true
+leaderElection:
+  leaseDuration: "8"
+  renewDeadline: "6"
+  retryPeriod: "2"
+service:
+  ipFamilyPolicy: "SingleStack"
+  ipFamilies:
+    - "IPv4"

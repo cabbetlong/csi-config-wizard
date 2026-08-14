@@ -1,0 +1,60 @@
+app.title: Huawei CSI Config Wizard
+app.subtitle: Guided generation of helm-values / Storage Backend / StorageClass / PVC configs
+nav.scenario: Scenario
+nav.helm: CSI Installation
+nav.backend: Storage Backend
+nav.storageclass: StorageClass
+nav.pvc: PersistentVolumeClaim
+nav.result: Result
+scenario.title: Configuration Scenario
+scenario.hint: Answer config-related questions. Recommended values are pre-filled for later steps - all editable.
+scenario.start: Start Wizard
+step.back: Back
+step.next: Next
+backend.add: Add Backend
+backend.remove: Remove
+list.add: Add
+backend.card: Backend {n}
+advanced.toggle: Advanced Options
+preview.title: Generated Preview
+download: Download
+copy: Copy
+copied: Copied
+result.title: Deployment Result
+result.hint: Apply in the order below. Every file is a live view of the current configuration.
+result.order: Apply Order
+result.commands: Deployment Commands
+result.checks: Deployment Checklist
+result.cross: Consistency Checks (kept automatically, verified here)
+result.pass: Pass
+result.fail: Fail
+result.n/a: N/A
+result.noBackends: No backends created yet - add one in step 2
+loading: Loading configuration…
+configError.title: Configuration Error
+configError.hint: Check the files under public/config/.
+lang.switch: 中文
+err.required: Required
+err.pattern: Invalid format
+err.min: Must be ≥ {min}
+err.max: Must be ≤ {max}
+err.enum: Not in the allowed set
+err.invalidJson: Not a valid JSON string
+err.unknownHook: Unknown validation rule
+err.summary: "{n} issue(s) to fix"
+serviceType.block: Block Service
+serviceType.file: File Service
+serviceType.dtree: File System (Dtree)
+protocol.fc: FC
+protocol.iscsi: iSCSI
+protocol.nvme-roce: NVMe over RoCE
+protocol.nvme-fc: NVMe over FC
+protocol.nvme-tcp: NVMe over TCP
+protocol.nfs: NFS
+protocol.nfs+: NFS+
+protocol.dpc: DPC
+protocol.scsi: SCSI
+platform.k8s: Kubernetes
+platform.openshift: OpenShift
+platform.tanzu: Tanzu (TKGI)
+platform.cce: CCE / CCE Agile
