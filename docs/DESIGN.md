@@ -136,6 +136,8 @@ fields:
 
 ## 9. 维护指南（加配置不改代码）
 
+**完整、可照做的操作手册见 [CONFIG-GUIDE.md](CONFIG-GUIDE.md)**（分步骤讲解如何在任意步骤修改/新增参数、条件 DSL、模板语法、验证方法与常见陷阱）。下面是最简索引：
+
 | 变更 | 操作 | 是否改代码 |
 |------|------|-----------|
 | 新增产品系列/协议组合 | families.yaml 加条目 | 否 |
@@ -143,7 +145,7 @@ fields:
 | 新增场景推荐值 | 场景由家族矩阵+平台预设承载，改 families.yaml/helm.yaml | 否 |
 | 新增防错条目 | pitfalls.yaml | 否 |
 | 新增产物类型（如静态 PV） | index.yaml flow 加步骤 + 新模板 + fields.yaml 加字段组 | 否 |
-| 新增钩子 | src/hooks/index.js 注册 | 是（有意为之的逃生门） |
+| 新字段类型 / 新选项来源 / 新校验逻辑 | FieldInput.vue / store.js / hooks/index.js | 是（有意为之的逃生门） |
 
 **配置自校验**：所有配置文件经 JSON Schema 校验（`src/engine/schema/*.json`），配置错误在页面加载时即时报出。
 **渲染测试**：`tests/golden/` 下放固定状态→期望 YAML，`npm test` 跑全链路比对。

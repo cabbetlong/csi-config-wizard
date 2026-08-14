@@ -2,7 +2,7 @@
 
 引导客户逐步生成华为 CSI 部署所需的全部 YAML：`helm-values.yaml` → `backend.yaml`（oceanctl）→ `storageclass.yaml` → `pvc.yaml`，解决"步骤多、配置繁杂、易出错"的痛点。
 
-完整设计文档见 [docs/DESIGN.md](docs/DESIGN.md)。
+完整设计文档见 [docs/DESIGN.md](docs/DESIGN.md)；**在任意步骤修改/新增参数的操作手册见 [docs/CONFIG-GUIDE.md](docs/CONFIG-GUIDE.md)**。
 
 ## 特性
 
