@@ -23,7 +23,23 @@ const steps = computed(() => [
 const current = computed(() => steps.value[props.store.state.step] ?? steps.value[0])
 
 function go(n) {
-  props.store.state.step = Math.max(0, Math.min(steps.value.length - 1, n))
+  const last = steps.value.length - 1
+  // 进入结果页守卫：任何步骤有未通过校验的字段 → 跳到第一个出错步骤并展开错误
+  if (n === last) {
+    const bad = props.store.firstErrorStep()
+    if (bad) {
+      props.store.state.showErrors[bad.step.id] = true
+      props.store.state.step = bad.flowIdx + 1
+      props.store.notify(
+        t('result.redirectNotice', {
+          step: bad.step[`label_${props.store.state.language}`] ?? bad.step.id,
+          n: bad.count,
+        }),
+      )
+      return
+    }
+  }
+  props.store.state.step = Math.max(0, Math.min(last, n))
 }
 
 function toggleLang() {
@@ -69,6 +85,11 @@ function onReset() {
     </nav>
 
     <main class="content">
+      <transition name="toast">
+        <div v-if="store.state.notice" :key="store.state.notice.ts" class="toast">
+          ⚠ {{ store.state.notice.text }}
+        </div>
+      </transition>
       <ScenarioView v-if="current.view === 'scenario'" :store="store" @next="go(1)" />
       <StepView v-else-if="current.view === 'step'" :store="store" :step="current.step" />
       <ResultView v-else :store="store" />

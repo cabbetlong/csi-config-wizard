@@ -19,6 +19,8 @@ scenario.help.protocol: 主机与存储之间的连接协议；可选项由产�
 scenario.help.platform: 决定安装参数预设（如 kubelet 目录、driver 名称、安装方式）
 nav.reset: 重新开始
 result.downloadAll: 全部下载
+result.redirectNotice: "{step} 还有 {n} 处未通过校验，已为你跳转修正"
+result.unresolved: 以下步骤存在未通过校验的字段，结果可能不完整：
 backend.add: 添加后端
 backend.remove: 删除
 list.add: 添加

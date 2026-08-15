@@ -49,6 +49,15 @@ const pitfalls = computed(() => {
 })
 
 const copied = ref('')
+
+// 全步骤校验状态（兜底：localStorage 恢复直接落在结果页等路径）
+const badSteps = computed(() =>
+  props.store.validateAll().filter((s) => s.errors.length > 0),
+)
+function goToStep(step) {
+  props.store.state.showErrors[step.id] = true
+  props.store.state.step = props.store.config.flow.findIndex((s) => s.id === step.id) + 1
+}
 async function copy(name, text) {
   try {
     await navigator.clipboard.writeText(text)
@@ -83,6 +92,19 @@ function downloadAll() {
       <button class="btn secondary small" @click="downloadAll">⬇ {{ t('result.downloadAll') }}</button>
     </div>
     <p class="muted">{{ t('result.hint') }}</p>
+
+    <!-- 未通过校验的步骤警告（可点击跳转修正） -->
+    <div v-if="badSteps.length" class="result-warning">
+      <span>⚠ {{ t('result.unresolved') }}</span>
+      <button
+        v-for="s in badSteps"
+        :key="s.step.id"
+        class="btn ghost small"
+        @click="goToStep(s.step)"
+      >
+        {{ s.step[`label_${store.state.language}`] }}（{{ s.errors.length }}）
+      </button>
+    </div>
 
     <!-- 执行顺序 -->
     <h3>① {{ t('result.order') }}</h3>

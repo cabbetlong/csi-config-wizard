@@ -18,6 +18,8 @@ scenario.help.protocol: The connection protocol between hosts and storage; optio
 scenario.help.platform: Determines installation presets (kubelet dir, driver name, install mode)
 nav.reset: Start Over
 result.downloadAll: Download All
+result.redirectNotice: "{step} has {n} unresolved validation issue(s); jumped there to fix"
+result.unresolved: "The following steps have validation issues; results may be incomplete"
 backend.add: Add Backend
 backend.remove: Remove
 list.add: Add

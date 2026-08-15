@@ -137,6 +137,21 @@ function next() {
     props.store.markAllVisibleTouched([...basicFields.value, ...advancedFields.value], ctx)
     return
   }
+  // 末步"查看结果"：先做全步骤校验，有错跳到第一个出错步骤
+  if (stepIndex.value === props.store.config.flow.length - 1) {
+    const bad = props.store.firstErrorStep()
+    if (bad) {
+      props.store.state.showErrors[bad.step.id] = true
+      props.store.state.step = bad.flowIdx + 1
+      props.store.notify(
+        t('result.redirectNotice', {
+          step: bad.step[`label_${props.store.state.language}`] ?? bad.step.id,
+          n: bad.count,
+        }),
+      )
+      return
+    }
+  }
   props.store.state.step = Math.min(props.store.config.flow.length + 1, stepIndex.value + 2)
 }
 function prev() {

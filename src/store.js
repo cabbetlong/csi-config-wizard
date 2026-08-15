@@ -4,6 +4,7 @@ import { reactive, watch } from 'vue'
 import yaml from 'js-yaml'
 import { renderTemplate } from './engine/renderer.js'
 import { evalCondition } from './engine/conditions.js'
+import { validateFields } from './engine/validator.js'
 
 const STORAGE_KEY = 'huawei-csi-config-wizard:v1'
 
@@ -62,6 +63,7 @@ export function createStore(config) {
     // UX：字段错误只在"触碰过"（blur/change）或点击"下一步"后显示
     touched: {},          // fieldId -> true
     showErrors: {},       // stepId -> true（点下一步时展开该步全部错误）
+    notice: null,         // 顶部 toast 提示
   })
 
   // 应用字段默认值（仅对当前可见的字段；visibility 由 buildCtx 判定）
@@ -362,6 +364,46 @@ export function createStore(config) {
     }
   }
 
+  // 全步骤校验：返回每个流程步骤的字段错误列表（结果页守卫/横幅用）
+  function validateAll() {
+    return config.flow.map((step) => {
+      const fieldDefs = config.fields.filter((f) =>
+        f.id.startsWith(step.artifact + '.'),
+      )
+      const errors = []
+      if (step.multi) {
+        state.backends.forEach((_, i) => {
+          errors.push(...validateFields(fieldDefs, buildCtx(i)))
+        })
+      } else {
+        errors.push(...validateFields(fieldDefs, buildCtx()))
+      }
+      return { step, errors }
+    })
+  }
+
+  // 第一个有校验错误的步骤；无错误返回 null
+  function firstErrorStep() {
+    const all = validateAll()
+    const bad = all.find((s) => s.errors.length > 0)
+    if (!bad) return null
+    return {
+      step: bad.step,
+      flowIdx: config.flow.findIndex((s) => s.id === bad.step.id),
+      count: bad.errors.length,
+    }
+  }
+
+  // 顶部提示（toast），自动消失
+  let noticeTimer = null
+  function notify(text) {
+    state.notice = { text, ts: Date.now() }
+    clearTimeout(noticeTimer)
+    noticeTimer = setTimeout(() => {
+      state.notice = null
+    }, 4000)
+  }
+
   // 重新开始：清空 localStorage 并刷新（预置后端等默认值会重建）
   function reset() {
     try {
@@ -392,6 +434,9 @@ export function createStore(config) {
     currentService,
     markTouched,
     markAllVisibleTouched,
+    validateAll,
+    firstErrorStep,
+    notify,
     reset,
   }
 }

@@ -109,6 +109,23 @@ describe('App 端到端（组件级）', () => {
     expect(scnProto.find('select').element.value).toBe('fc')
   })
 
+  it('场景页直接点"结果"：有未校验字段时跳转到第一个出错步骤并展开错误', async () => {
+    const wrapper = mount(App)
+    await flushPromises()
+    await new Promise((r) => setTimeout(r, 30))
+
+    // 场景页直接点击步骤条最后的"结果"
+    const navSteps = wrapper.findAll('nav .step')
+    await navSteps[navSteps.length - 1].trigger('click')
+    await flushPromises()
+
+    // 后端（首个有错步骤）url 必填为空 → 被拦截并跳转到该步
+    expect(wrapper.text()).toContain('后端名称')
+    expect(wrapper.find('.err-summary').exists()).toBe(true)
+    // 提示 toast 出现
+    expect(wrapper.text()).toContain('未通过校验')
+  })
+
   it('步进导航：默认后端已预置，走完四步到达结果页', async () => {
     const wrapper = mount(App)
     await flushPromises()

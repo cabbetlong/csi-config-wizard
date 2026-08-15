@@ -5,9 +5,10 @@ import { evalCondition } from './conditions.js'
 import { runHook } from '../hooks/index.js'
 
 // 返回 [{ fieldId, key, vars }] —— key 为 i18n 消息 key
-export function validateAllFields(config, ctx) {
+// 只校验传入的字段集合（结果页/全局校验用）
+export function validateFields(fieldDefs, ctx) {
   const errors = []
-  for (const f of config.fields) {
+  for (const f of fieldDefs) {
     if (f.visible_when && !evalCondition(f.visible_when, ctx)) continue
     const value = ctx.fields?.[f.id]
     const required =
@@ -37,6 +38,10 @@ export function validateAllFields(config, ctx) {
     }
   }
   return errors
+}
+
+export function validateAllFields(config, ctx) {
+  return validateFields(config.fields, ctx)
 }
 
 // 跨文件一致性检查（Q12②）。模板已自动保证大部分一致性，
