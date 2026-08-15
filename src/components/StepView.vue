@@ -164,9 +164,6 @@ function prev() {
         </button>
         <button class="chip add" @click="addBackend">+ {{ t('backend.add') }}</button>
       </div>
-      <p v-if="step.id === 'backend'" class="muted protocol-note">
-        {{ t('backend.protocolNote', { protocol: t('protocol.' + store.state.scenario.protocol) }) }}
-      </p>
       <button v-if="isMulti && store.state.backends.length > 1" class="btn ghost small" @click="removeBackend(store.state.activeBackend)">
         {{ t('backend.remove') }} {{ t('backend.card', { n: store.state.activeBackend + 1 }) }}
       </button>

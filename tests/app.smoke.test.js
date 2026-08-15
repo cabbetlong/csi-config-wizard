@@ -16,6 +16,8 @@ function fileResponse(file) {
 }
 
 beforeEach(() => {
+  // 清掉上个用例持久化的状态（协议联动等会写入 localStorage）
+  if (typeof localStorage !== 'undefined') localStorage.clear()
   global.fetch = vi.fn(async (url) => {
     const u = String(url)
     if (u.includes('/config/')) {
@@ -70,18 +72,41 @@ describe('App 端到端（组件级）', () => {
     expect(wrapper.find('.err-summary').exists()).toBe(false)
     expect(wrapper.find('.err').exists()).toBe(false)
 
-    // 协议字段已隐藏（由场景驱动），只显示提示文案，无协议下拉框
-    expect(wrapper.text()).toContain('来自场景选择')
-    const protoField = wrapper
-      .findAll('.field')
-      .find((f) => f.text().includes('协议'))
-    expect(protoField).toBeFalsy()
-
     // 点击"下一步" → 展开该步错误
     await wrapper.find('button.primary').trigger('click')
     await flushPromises()
     expect(wrapper.find('.err-summary').exists()).toBe(true)
     expect(wrapper.text()).toContain('必填')
+  })
+
+  it('协议双向联动：后端步骤默认选中场景协议，修改后同步回场景', async () => {
+    const wrapper = mount(App)
+    await flushPromises()
+    await new Promise((r) => setTimeout(r, 30))
+
+    // 场景 → Step1 → Step2（存储后端）
+    await wrapper.find('button.primary').trigger('click')
+    await flushPromises()
+    await wrapper.find('button.primary').trigger('click')
+    await flushPromises()
+
+    // 后端步骤的协议下拉存在，且默认选中场景中的协议（iscsi）
+    const protoField = wrapper.findAll('.field').find((f) => f.text().includes('协议'))
+    expect(protoField).toBeTruthy()
+    expect(protoField.find('select').element.value).toBe('iscsi')
+
+    // 修改为 fc → 联动：portals 字段消失（fc 协议禁止 portals）
+    await protoField.find('select').setValue('fc')
+    await flushPromises()
+    expect(wrapper.findAll('.field').find((f) => f.text().includes('Portal 地址'))).toBeFalsy()
+
+    // 联动：回到场景页，协议下拉已同步为 fc
+    await wrapper.findAll('nav .step')[0].trigger('click')
+    await flushPromises()
+    const scnProto = wrapper
+      .findAll('.field')
+      .find((f) => f.find('.field-label')?.text().includes('协议'))
+    expect(scnProto.find('select').element.value).toBe('fc')
   })
 
   it('步进导航：默认后端已预置，走完四步到达结果页', async () => {

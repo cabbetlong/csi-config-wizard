@@ -176,6 +176,16 @@ export function createStore(config) {
       if (key === 'backend') state.sc.pool = undefined
     } else if (artifact === 'pvc') state.pvc[key] = value
     else if (artifact === 'backend' && state.backends[state.activeBackend]) {
+      // 协议是全局共享值：修改联动更新场景与所有后端，并清空协议相关条件字段
+      if (key === 'protocol') {
+        state.scenario.protocol = value
+        for (const b of state.backends) {
+          b.protocol = value
+          b.portals = []
+          b.scsiHosts = []
+        }
+        return
+      }
       state.backends[state.activeBackend][key] = value
     }
   }
