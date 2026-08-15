@@ -196,6 +196,7 @@ fields:
     label_zh: 存储类名称
     label_en: StorageClass Name
     type: text
+    default: mysc
     required: true
     level: basic
     validate: {pattern: "^[a-z0-9][a-z0-9-]{0,62}$"}
@@ -299,6 +300,7 @@ fields:
     label_zh: PVC 名称
     label_en: PVC Name
     type: text
+    default: mypvc
     required: true
     level: basic
     validate: {pattern: "^[a-z0-9][a-z0-9-]{0,62}$"}

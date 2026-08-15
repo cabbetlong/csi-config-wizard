@@ -67,11 +67,21 @@ function download(name, text) {
   a.click()
   URL.revokeObjectURL(url)
 }
+
+// 全部下载：按部署顺序依次触发（错峰避免浏览器拦截）
+function downloadAll() {
+  artifacts.value.forEach((a, i) => {
+    setTimeout(() => download(a.fileName, renderFor(a)), i * 350)
+  })
+}
 </script>
 
 <template>
   <section class="panel">
-    <h2>{{ t('result.title') }}</h2>
+    <div class="result-head">
+      <h2>{{ t('result.title') }}</h2>
+      <button class="btn secondary small" @click="downloadAll">⬇ {{ t('result.downloadAll') }}</button>
+    </div>
     <p class="muted">{{ t('result.hint') }}</p>
 
     <!-- 执行顺序 -->
@@ -88,7 +98,10 @@ function download(name, text) {
             <span v-else-if="a.id === 'pvc'" class="badge">kubectl</span>
             <span v-else class="badge">helm</span>
           </div>
-          <pre class="yaml">{{ renderFor(a) }}</pre>
+          <details class="yaml-collapse">
+            <summary>YAML</summary>
+            <pre class="yaml">{{ renderFor(a) }}</pre>
+          </details>
           <div class="row">
             <button class="btn ghost small" @click="copy(a.fileName, renderFor(a))">
               {{ copied === a.fileName ? t('copied') : t('copy') }}

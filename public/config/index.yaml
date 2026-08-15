@@ -10,6 +10,8 @@ flow:
     artifact: helm
     label_zh: CSI 安装
     label_en: CSI Installation
+    desc_zh: 生成 CSI 驱动安装所需的完整 Helm values.yaml，供 helm install（或 CCE 控制台上传）使用
+    desc_en: Generates the full Helm values.yaml for CSI driver installation (helm install or CCE console upload)
     file: helm-values.yaml
     template: templates/helm-values.yaml
     commands: templates/commands/helm.yaml
@@ -17,6 +19,8 @@ flow:
     artifact: backend
     label_zh: 存储后端
     label_en: Storage Backend
+    desc_zh: 生成存储后端配置（oceanctl 创建，创建时交互输入存储账号密码，可添加多个）
+    desc_en: Generates storage backend config (created via oceanctl; prompts for storage account password; multiple supported)
     file: backend.yaml
     template: templates/backend.yaml
     commands: templates/commands/backend.yaml
@@ -25,6 +29,8 @@ flow:
     artifact: sc
     label_zh: 存储类
     label_en: StorageClass
+    desc_zh: 生成 Kubernetes StorageClass（kubectl 创建）；PVC 通过它引用后端与卷参数
+    desc_en: Generates a Kubernetes StorageClass (kubectl); PVCs reference backends and volume params through it
     file: storageclass.yaml
     template: templates/storageclass.yaml
     commands: templates/commands/storageclass.yaml
@@ -32,6 +38,8 @@ flow:
     artifact: pvc
     label_zh: 持久卷声明
     label_en: PersistentVolumeClaim
+    desc_zh: 生成 PVC 清单（kubectl 创建），绑定上一步生成的 StorageClass
+    desc_en: Generates a PVC manifest (kubectl), bound to the StorageClass from the previous step
     file: pvc.yaml
     template: templates/pvc.yaml
     commands: templates/commands/pvc.yaml

@@ -11,6 +11,13 @@ scenario.hint: Answer config-related questions. Recommended values are pre-fille
 scenario.start: Start Wizard
 step.back: Back
 step.next: Next
+step.viewResult: View Result
+scenario.help.family: Huawei storage product series; determines the storage type and available protocols
+scenario.help.serviceType: Block (databases, VMs), File (shared filesystems), or Dtree (quota directory trees)
+scenario.help.protocol: The connection protocol between hosts and storage; options are filtered by series and service type
+scenario.help.platform: Determines installation presets (kubelet dir, driver name, install mode)
+nav.reset: Start Over
+result.downloadAll: Download All
 backend.add: Add Backend
 backend.remove: Remove
 list.add: Add

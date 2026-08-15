@@ -47,6 +47,7 @@ function setPlatform(value) {
             {{ f[`label_${store.state.language}`] }}
           </option>
         </select>
+        <span class="help">{{ t('scenario.help.family') }}</span>
       </label>
 
       <label class="field">
@@ -59,6 +60,7 @@ function setPlatform(value) {
             {{ s[`label_${store.state.language}`] }}
           </option>
         </select>
+        <span class="help">{{ t('scenario.help.serviceType') }}</span>
       </label>
 
       <label class="field">
@@ -71,6 +73,7 @@ function setPlatform(value) {
             {{ t('protocol.' + p) }}
           </option>
         </select>
+        <span class="help">{{ t('scenario.help.protocol') }}</span>
       </label>
 
       <label class="field">
@@ -80,6 +83,7 @@ function setPlatform(value) {
             {{ p[`label_${store.state.language}`] }}
           </option>
         </select>
+        <span class="help">{{ t('scenario.help.platform') }}</span>
       </label>
     </div>
 

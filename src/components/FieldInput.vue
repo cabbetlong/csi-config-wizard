@@ -10,7 +10,7 @@ const props = defineProps({
   value: { type: null, required: false },
   error: { type: String, default: '' },
 })
-const emit = defineEmits(['update'])
+const emit = defineEmits(['update', 'touched'])
 
 const { t, fieldLabel, fieldHelp, fieldPlaceholder } = useI18n(props.store)
 
@@ -37,6 +37,9 @@ const isKV = computed(() => props.field.type === 'key-value-list')
 
 function set(v) {
   emit('update', v)
+}
+function touch() {
+  emit('touched')
 }
 function setListItem(idx, v) {
   const arr = [...(props.value ?? [])]
@@ -72,6 +75,7 @@ function addKV() {
       :value="value ?? ''"
       :placeholder="fieldPlaceholder(field)"
       @input="set($event.target.value)"
+      @blur="touch"
     />
 
     <!-- number -->
@@ -80,17 +84,18 @@ function addKV() {
       type="number"
       :value="value ?? ''"
       @input="set($event.target.value === '' ? undefined : Number($event.target.value))"
+      @blur="touch"
     />
 
     <!-- select -->
-    <select v-else-if="field.type === 'select'" :value="value ?? ''" @change="set($event.target.value)">
+    <select v-else-if="field.type === 'select'" :value="value ?? ''" @change="set($event.target.value); touch()">
       <option value=""></option>
       <option v-for="o in options" :key="o.value" :value="o.value">{{ o.label }}</option>
     </select>
 
     <!-- bool -->
     <label v-else-if="field.type === 'bool'" class="check">
-      <input type="checkbox" :checked="!!value" @change="set($event.target.checked)" />
+      <input type="checkbox" :checked="!!value" @change="set($event.target.checked); touch()" />
       <span>{{ value ? 'true' : 'false' }}</span>
     </label>
 
@@ -101,6 +106,7 @@ function addKV() {
       :value="value ?? ''"
       :placeholder="fieldPlaceholder(field)"
       @input="set($event.target.value)"
+      @blur="touch"
     ></textarea>
 
     <!-- list of strings -->

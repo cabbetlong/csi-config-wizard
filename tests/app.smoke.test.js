@@ -51,6 +51,32 @@ describe('App 端到端（组件级）', () => {
     expect(html).toContain('kubeletConfigDir')
   })
 
+  it('错误延迟显示：进入后端步骤不直接红错，点下一步后才提示必填', async () => {
+    const wrapper = mount(App)
+    await flushPromises()
+    await new Promise((r) => setTimeout(r, 30))
+
+    // 场景 → Step1 → Step2（存储后端）
+    await wrapper.find('button.primary').trigger('click')
+    await flushPromises()
+    await wrapper.find('button.primary').trigger('click')
+    await flushPromises()
+
+    // 默认后端已预置且名称默认为 backend-1
+    expect(wrapper.findAll('button.chip').length).toBeGreaterThanOrEqual(1)
+    expect(wrapper.text()).toContain('backend-1')
+
+    // url 必填且为空，但尚未触碰 → 不应显示错误
+    expect(wrapper.find('.err-summary').exists()).toBe(false)
+    expect(wrapper.find('.err').exists()).toBe(false)
+
+    // 点击"下一步" → 展开该步错误
+    await wrapper.find('button.primary').trigger('click')
+    await flushPromises()
+    expect(wrapper.find('.err-summary').exists()).toBe(true)
+    expect(wrapper.text()).toContain('必填')
+  })
+
   it('步进导航：默认后端已预置，走完四步到达结果页', async () => {
     const wrapper = mount(App)
     await flushPromises()
@@ -66,6 +92,12 @@ describe('App 端到端（组件级）', () => {
     // 默认后端已预置（无需点击"添加后端"）
     expect(wrapper.findAll('button.chip').length).toBeGreaterThanOrEqual(1)
 
+    // 填必填项：存储管理地址（url）
+    const urlField = wrapper.findAll('.field').find((f) => f.text().includes('存储管理地址'))
+    await urlField.find('input').setValue('https://192.168.1.10:8088')
+    await urlField.find('input').trigger('blur')
+    await flushPromises()
+
     // 给默认后端配置一个存储池（列表编辑器：加一行 → 输入）
     const poolField = wrapper.findAll('.field').find((f) => f.text().includes('存储池'))
     expect(poolField).toBeTruthy()
@@ -73,6 +105,14 @@ describe('App 端到端（组件级）', () => {
     await flushPromises()
     const poolInput = poolField.find('input')
     await poolInput.setValue('Pool001')
+    await flushPromises()
+
+    // iSCSI 协议下 portals 必填：加一行
+    const portalField = wrapper.findAll('.field').find((f) => f.text().includes('Portal 地址'))
+    expect(portalField).toBeTruthy()
+    await portalField.find('button').trigger('click')
+    await flushPromises()
+    await portalField.find('input').setValue('10.0.0.1')
     await flushPromises()
 
     // Step2 → Step3（存储类）：存储池应为下拉框且选项来自所选后端

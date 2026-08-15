@@ -17,6 +17,17 @@ const stepIndex = computed(() =>
   props.store.config.flow.findIndex((s) => s.id === props.step.id),
 )
 
+const lang = computed(() => props.store.state.language)
+const stepDesc = computed(
+  () =>
+    props.step[`desc_${lang.value}`] ??
+    props.step[`desc_${lang.value === 'zh' ? 'en' : 'zh'}`] ??
+    '',
+)
+const artifactTool = computed(
+  () => ({ helm: 'helm', backend: 'oceanctl', storageclass: 'kubectl', pvc: 'kubectl' })[props.step.id] ?? '',
+)
+
 // 该产物（artifact）的字段，按 level 分组
 const artifact = computed(() => props.step.artifact)
 const basicFields = computed(() =>
@@ -53,7 +64,15 @@ const errors = computed(() => {
   return map
 })
 
+// 错误延迟显示：只在字段被触碰过，或用户点过"下一步"后展示
+function showError(fieldId) {
+  return !!props.store.state.showErrors[props.step.id] || !!props.store.state.touched[fieldId]
+}
+
 const hasErrors = computed(() => Object.keys(errors.value).length > 0)
+const showSummary = computed(
+  () => hasErrors.value && Object.keys(errors.value).some((id) => showError(id)),
+)
 
 // 当前生效的字段（visible_when 为真；backend 步骤以当前活动后端为上下文）。
 // 注意：模板里 ref/computed 会自动解包，这里用 computed 持有过滤结果，避免把
@@ -110,6 +129,13 @@ async function copy() {
 }
 
 function next() {
+  const ctx = props.store.buildCtx()
+  // 有错时先停留并展开全部错误（步骤条仍可自由跳转，不锁死流程）
+  if (Object.keys(errors.value).length > 0) {
+    props.store.state.showErrors[props.step.id] = true
+    props.store.markAllVisibleTouched([...basicFields.value, ...advancedFields.value], ctx)
+    return
+  }
   props.store.state.step = Math.min(props.store.config.flow.length + 1, stepIndex.value + 2)
 }
 function prev() {
@@ -121,6 +147,8 @@ function prev() {
   <section class="panel split">
     <div class="form-col">
       <h2>{{ fieldLabel(step) }}</h2>
+      <p v-if="stepDesc" class="muted step-desc">{{ stepDesc }}</p>
+      <p class="artifact-line"><code>{{ step.file }}</code><span v-if="artifactTool" class="badge">{{ artifactTool }}</span></p>
 
       <!-- 多后端：卡片切换 -->
       <div v-if="isMulti" class="cards">
@@ -146,8 +174,9 @@ function prev() {
           :store="store"
           :field="f"
           :value="store.getField(f.id)"
-          :error="errors[f.id] || ''"
+          :error="showError(f.id) ? errors[f.id] || '' : ''"
           @update="(v) => store.setField(f.id, v)"
+          @touched="store.markTouched(f.id)"
         />
       </div>
 
@@ -160,17 +189,20 @@ function prev() {
             :store="store"
             :field="f"
             :value="store.getField(f.id)"
-            :error="errors[f.id] || ''"
+            :error="showError(f.id) ? errors[f.id] || '' : ''"
             @update="(v) => store.setField(f.id, v)"
+            @touched="store.markTouched(f.id)"
           />
         </div>
       </details>
 
-      <div v-if="hasErrors" class="err-summary">⚠ {{ t('err.summary', { n: Object.keys(errors).length }) }}</div>
+      <div v-if="showSummary" class="err-summary">⚠ {{ t('err.summary', { n: Object.keys(errors).length }) }}</div>
 
       <div class="actions">
         <button class="btn secondary" @click="prev">{{ t('step.back') }}</button>
-        <button class="btn primary" @click="next">{{ t('step.next') }}</button>
+        <button class="btn primary" @click="next">
+          {{ stepIndex === store.config.flow.length - 1 ? t('step.viewResult') : t('step.next') }}
+        </button>
       </div>
     </div>
 

@@ -59,6 +59,9 @@ export function createStore(config) {
     sc: saved.sc ?? {},
     pvc: saved.pvc ?? {},
     step: saved.step ?? 0,
+    // UX：字段错误只在"触碰过"（blur/change）或点击"下一步"后显示
+    touched: {},          // fieldId -> true
+    showErrors: {},       // stepId -> true（点下一步时展开该步全部错误）
   })
 
   // 应用字段默认值（仅对当前可见的字段；visibility 由 buildCtx 判定）
@@ -229,7 +232,7 @@ export function createStore(config) {
     const family = config.families.find((f) => f.id === state.scenario.familyId)
     const service = family?.serviceTypes?.[state.scenario.serviceType]
     const nb = {
-      name: '',
+      name: `backend-${state.backends.length + 1}`,
       url: '',
       pools: [],
       protocol: state.scenario.protocol ?? service?.defaultProtocol ?? null,
@@ -249,6 +252,8 @@ export function createStore(config) {
     }
     state.backends.push(nb)
     state.activeBackend = state.backends.length - 1
+    // SC 的关联后端默认带出第一个后端名（用户可改）
+    if (!state.sc.backend) state.sc.backend = nb.name
     return nb
   }
 
@@ -327,6 +332,28 @@ export function createStore(config) {
     return currentFamily()?.serviceTypes?.[state.scenario.serviceType]
   }
 
+  // ---------- UX 辅助 ----------
+  function markTouched(fieldId) {
+    state.touched[fieldId] = true
+  }
+
+  function markAllVisibleTouched(fields, ctx) {
+    for (const f of fields) {
+      if (f.visible_when && !evalCondition(f.visible_when, ctx)) continue
+      state.touched[f.id] = true
+    }
+  }
+
+  // 重新开始：清空 localStorage 并刷新（预置后端等默认值会重建）
+  function reset() {
+    try {
+      localStorage.removeItem(STORAGE_KEY)
+    } catch {
+      /* ignore */
+    }
+    if (typeof location !== 'undefined') location.reload()
+  }
+
   return {
     state,
     config,
@@ -345,5 +372,8 @@ export function createStore(config) {
     protocolOptions,
     currentFamily,
     currentService,
+    markTouched,
+    markAllVisibleTouched,
+    reset,
   }
 }

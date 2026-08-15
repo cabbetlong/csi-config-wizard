@@ -12,6 +12,13 @@ scenario.hint: 选择与配置直接相关的场景信息，后续步骤将自�
 scenario.start: 进入向导
 step.back: 上一步
 step.next: 下一步
+step.viewResult: 查看结果
+scenario.help.family: 华为存储的产品系列，决定存储类型与可用协议
+scenario.help.serviceType: 块服务（数据库、虚拟机等块设备场景）/ 文件服务（共享文件系统）/ Dtree（配额目录树）
+scenario.help.protocol: 主机与存储之间的连接协议；可选项由产品系列与业务类型自动过滤
+scenario.help.platform: 决定安装参数预设（如 kubelet 目录、driver 名称、安装方式）
+nav.reset: 重新开始
+result.downloadAll: 全部下载
 backend.add: 添加后端
 backend.remove: 删除
 list.add: 添加

@@ -91,6 +91,8 @@ export function buildSchemas() {
               artifact: { type: 'string' },
               label_zh: { type: 'string' },
               label_en: { type: 'string' },
+              desc_zh: { type: 'string' },
+              desc_en: { type: 'string' },
               file: { type: 'string' },
               template: { type: 'string' },
               commands: { type: 'string' },

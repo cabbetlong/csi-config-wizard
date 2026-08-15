@@ -29,6 +29,11 @@ function go(n) {
 function toggleLang() {
   props.store.state.language = props.store.state.language === 'zh' ? 'en' : 'zh'
 }
+
+function onReset() {
+  const msg = props.store.state.language === 'zh' ? '清空当前所有配置并重新开始？' : 'Clear all configuration and start over?'
+  if (typeof confirm === 'undefined' || confirm(msg)) props.store.reset()
+}
 </script>
 
 <template>
@@ -44,6 +49,7 @@ function toggleLang() {
         </div>
         <div class="navbar-right">
           <span class="badge badge-dark">CSI {{ store.config.meta.version }}</span>
+          <button class="btn navbar-btn" @click="onReset" :title="t('nav.reset')">↺ {{ t('nav.reset') }}</button>
           <button class="btn navbar-btn" @click="toggleLang">{{ t('lang.switch') }}</button>
         </div>
       </div>
@@ -57,7 +63,7 @@ function toggleLang() {
         :class="{ active: i === store.state.step, done: i < store.state.step }"
         @click="go(i)"
       >
-        <span class="step-idx">{{ i + 1 }}</span>
+        <span class="step-idx">{{ i < store.state.step ? '✓' : i + 1 }}</span>
         <span>{{ t(s.navKey) }}</span>
       </button>
     </nav>
