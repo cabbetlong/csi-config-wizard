@@ -13,7 +13,6 @@ const DATA_FILES = [
   'fields.yaml',
   'families.yaml',
   'helm.yaml',
-  'pitfalls.yaml',
   'i18n/zh.yaml',
   'i18n/en.yaml',
 ]

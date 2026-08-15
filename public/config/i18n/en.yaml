@@ -33,11 +33,6 @@ result.title: Deployment Result
 result.hint: Apply in the order below. Every file is a live view of the current configuration.
 result.order: Apply Order
 result.commands: Deployment Commands
-result.checks: Deployment Checklist
-result.cross: Consistency Checks (kept automatically, verified here)
-result.pass: Pass
-result.fail: Fail
-result.n/a: N/A
 result.noBackends: No backends created yet - add one in step 2
 loading: Loading configuration…
 configError.title: Configuration Error

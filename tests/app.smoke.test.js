@@ -183,6 +183,6 @@ describe('App 端到端（组件级）', () => {
     await wrapper.find('button.primary').trigger('click')
     await flushPromises()
     expect(wrapper.text()).toContain('部署结果')
-    expect(wrapper.text()).toContain('部署自检清单')
+    expect(wrapper.text()).toContain('helm-values.yaml')
   })
 })

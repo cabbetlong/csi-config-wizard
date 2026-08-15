@@ -48,10 +48,11 @@
 14. 配置自校验（JSON Schema）+ golden 渲染测试——加配置跑 `npm test` 验证。
 15. 锁 CSI v4.12.0；`index.yaml` 预留 `version` / `schemaVersion` 字段。
 
-### 防错（三级）
+### 防错（两级展示）
 16. 表单内实时校验（规则全在配置 DSL）。
-17. 生成时跨文件自检：`provisioner = driverName`、`SC.backend ∈ 已建后端`、`PVC.storageClassName = SC 名`、backend namespace 与 helm namespace 一致。
-18. 结果页部署自检清单（`pitfalls.yaml` 数据驱动）。
+17. 跨文件一致性自动保持：`provisioner = driverName`、`SC.backend ∈ 已建后端`、`PVC.storageClassName = SC 名`、namespace 一致性（由模板引用全局状态实现，无需手工核对）。
+
+> 注：早期设计曾包含"结果页部署自检清单（pitfalls.yaml）"与"结果页一致性检查"，已按需求移除（v0.2）。
 
 ## 4. 配置文件树（Q10=A）
 
@@ -61,7 +62,7 @@ public/config/
   fields.yaml           # 字段目录：类型/条件/校验/分级（表单与模板共用规则源）
   families.yaml         # 产品系列 × 业务类型 × 协议矩阵
   helm.yaml             # Step1 平台预设 + values.yaml 参数目录
-  pitfalls.yaml         # 部署自检清单（Q12③）
+  pitfalls.yaml         # ~~部署自检清单~~（已移除，v0.2）
   templates/
     helm-values.yaml    # 完整 values.yaml（含官方默认值 + 向导字段占位符 + 注释）
     backend.yaml        # oceanctl 后端 YAML
@@ -116,23 +117,9 @@ fields:
 - `validate-json`：qos / advancedOptions 等 JSON 字符串字段的格式校验
 - （预留）`validate-scsi-hosts` 等
 
-## 8. 防错清单（pitfalls.yaml）
+## 8. ~~防错清单（pitfalls.yaml）~~（已移除，v0.2）
 
-条目带 `artifact` + 可选 `condition` + 双语文案；结果页逐条判定 pass / fail / n/a。v1 条目（全部来自文档事实）：
-- backend 命名：小写字母/数字/中划线，≤63，首字符为字母或数字
-- backend namespace 必须等于 CSI 命名空间（默认 huawei-csi）
-- fc / fc-nvme / dpc 协议不得填写 portals
-- NFS 协议仅一个 portal
-- SC `provisioner` 必须等于 Step1 的 driverName
-- SC `volumeType` 由业务类型固定（lun/fs/dtree），不可随意改
-- Dorado 不支持 `thick`
-- 文件服务 SC 必须填 `authClient`
-- ext4 上限 50Ti，更大容量用 xfs
-- PV/PVC 容量单位必须为 `Gi`/`Ti` 结尾
-- oceanctl 创建后端时交互式输入账号密码（不是 YAML 里写密码）
-- CCE 平台走 helm package 上传控制台，不走 helm install
-- OpenShift 需先 `oc create -f helm_scc.yaml`
-- `driverName` 重装时必须保持一致，否则已有卷不可管理
+> 结果页的一致性检查与部署自检清单已按需求移除；表单实时校验与跨文件一致性自动保持仍然生效（模板引用全局状态保证）。
 
 ## 9. 维护指南（加配置不改代码）
 
@@ -143,7 +130,7 @@ fields:
 | 新增产品系列/协议组合 | families.yaml 加条目 | 否 |
 | 新增字段/条件/校验 | fields.yaml 加字段定义；模板加占位符 | 否 |
 | 新增场景推荐值 | 场景由家族矩阵+平台预设承载，改 families.yaml/helm.yaml | 否 |
-| 新增防错条目 | pitfalls.yaml | 否 |
+| 新增防错条目 | ~~pitfalls.yaml~~（文件已移除） | — |
 | 新增产物类型（如静态 PV） | index.yaml flow 加步骤 + 新模板 + fields.yaml 加字段组 | 否 |
 | 新字段类型 / 新选项来源 / 新校验逻辑 | FieldInput.vue / store.js / hooks/index.js | 是（有意为之的逃生门） |
 

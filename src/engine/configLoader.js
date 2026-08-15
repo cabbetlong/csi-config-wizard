@@ -15,7 +15,6 @@ const CONFIG_FILES = [
   'fields.yaml',
   'families.yaml',
   'helm.yaml',
-  'pitfalls.yaml',
   'i18n/zh.yaml',
   'i18n/en.yaml',
 ]
@@ -120,7 +119,6 @@ export function buildConfig(raw, templates) {
     fields: raw['fields.yaml'].fields,
     families: raw['families.yaml'].families,
     helm: raw['helm.yaml'],
-    pitfalls: raw['pitfalls.yaml'].pitfalls,
     i18n: { zh: raw['i18n/zh.yaml'], en: raw['i18n/en.yaml'] },
     templates: templates ?? {},
     flow,

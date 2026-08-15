@@ -171,29 +171,6 @@ export function buildSchemas() {
         },
       },
     },
-    'pitfalls.yaml': {
-      type: 'object',
-      additionalProperties: false,
-      required: ['pitfalls'],
-      properties: {
-        pitfalls: {
-          type: 'array',
-          items: {
-            type: 'object',
-            additionalProperties: false,
-            required: ['id', 'artifact', 'text_zh', 'text_en'],
-            properties: {
-              id: { type: 'string' },
-              artifact: { type: 'string' },
-              when: { $ref: '#/$defs/condition' },
-              text_zh: { type: 'string' },
-              text_en: { type: 'string' },
-            },
-          },
-        },
-      },
-      $defs: { condition: conditionSchema },
-    },
     'i18n/zh.yaml': { type: 'object', additionalProperties: { type: 'string' } },
     'i18n/en.yaml': { type: 'object', additionalProperties: { type: 'string' } },
   }

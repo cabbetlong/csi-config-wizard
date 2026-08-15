@@ -34,11 +34,6 @@ result.title: 部署结果
 result.hint: 按以下顺序执行；每类文件均来自当前配置，可在前序步骤修改后重新生成。
 result.order: 执行顺序
 result.commands: 部署命令
-result.checks: 部署自检清单
-result.cross: 一致性检查（向导自动保持，此处复核）
-result.pass: 通过
-result.fail: 未通过
-result.n/a: 不适用
 result.noBackends: 尚未创建后端，请先在第 2 步添加
 loading: 正在加载配置…
 configError.title: 配置加载失败

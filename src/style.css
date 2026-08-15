@@ -574,29 +574,6 @@ textarea:focus {
   overflow: auto;
 }
 
-.check-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: grid;
-  gap: 8px;
-}
-.check-list li {
-  display: flex;
-  gap: 10px;
-  align-items: flex-start;
-}
-.check-list .mark {
-  font-weight: 700;
-  flex-shrink: 0;
-}
-.check-list li.ok .mark {
-  color: #1e7e34;
-}
-.check-list li.bad .mark {
-  color: #b02a37;
-}
-
 /* ---------- 页脚 ---------- */
 .foot {
   max-width: 1180px;

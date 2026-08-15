@@ -15,8 +15,9 @@
 - `fields.yaml` 的**字段定义**同时驱动三件事：**表单 UI、校验规则、条件显示**
 - `templates/*.yaml` 的**产物模板**决定 YAML 输出的形状（`{{字段}}` / `{{#if}}` / `{{#each}}`）
 - `families.yaml`（产品系列×业务类型×协议矩阵）、`helm.yaml`（平台预设）提供**场景选项**
-- `pitfalls.yaml` 提供**部署自检清单**
 - `i18n/*.yaml` + 字段里的 `label_zh/label_en` 提供**双语文案**
+
+> 注：早期版本曾包含 `pitfalls.yaml`（部署自检清单）并在结果页展示一致性检查，已按需求移除（v0.2）；表单实时校验与跨文件一致性自动保持仍然生效。
 
 **改参数 = 改 YAML 数据；只有遇到"现有机制表达不了的需求"才需要动代码**（见 §8.5）。
 
@@ -42,7 +43,7 @@
 | `public/config/fields.yaml` | 全部字段定义（表单+校验+条件+双语） | **增删改任意参数** |
 | `public/config/families.yaml` | 产品系列 × 业务类型 × 协议矩阵 | 新增系列/业务类型/协议 |
 | `public/config/helm.yaml` | 容器平台预设 | 新增平台、改平台差异值 |
-| `public/config/pitfalls.yaml` | 部署自检清单 | 新增防错提示 |
+| ~~`public/config/pitfalls.yaml`~~ | ~~部署自检清单~~（已移除，v0.2） | — |
 | `public/config/templates/*.yaml` | 4 个产物模板 | 改 YAML 输出结构 |
 | `public/config/templates/commands/*.yaml` | 每步部署命令模板 | 改命令、按平台区分命令 |
 | `public/config/i18n/{zh,en}.yaml` | UI 通用文案 | 按钮/标题/错误提示 |
@@ -340,15 +341,9 @@ visible_when: {field: backend.protocol, eq: scsi}
 ### 8.1 改 YAML 输出结构
 直接编辑 `templates/` 下对应模板。规则见 §5。改完跑 `npm test`（golden 测试会告诉你输出是否被改坏——如果是有意改动，同步更新 `tests/golden.test.js` 的期望值）。
 
-### 8.2 新增防错清单条目（pitfalls.yaml）
+### 8.2 ~~新增防错清单条目（pitfalls.yaml）~~（已移除，v0.2）
 
-```yaml
-  - id: my-new-check
-    artifact: storageclass          # 归属产物（helm/backend/storageclass/pvc）
-    when: {field: sc.fsType, eq: xfs}   # 可选：条件，不满足则该条不适用
-    text_zh: 中文提示
-    text_en: English hint
-```
+> 部署自检清单与结果页一致性检查已按需求移除；如需恢复，重新创建 `public/config/pitfalls.yaml`，并在 `configLoader.js` 的 `CONFIG_FILES` 与 `schemas.js` 中登记即可。
 
 ### 8.3 改部署命令（commands/*.yaml）
 
