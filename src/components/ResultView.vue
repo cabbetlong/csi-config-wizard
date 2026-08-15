@@ -100,12 +100,14 @@ function downloadAll() {
           </div>
           <details class="yaml-collapse">
             <summary>YAML</summary>
-            <pre class="yaml">{{ renderFor(a) }}</pre>
+            <div class="yaml-wrap">
+              <button class="btn ghost small yaml-copy" @click="copy(a.fileName, renderFor(a))">
+                {{ copied === a.fileName ? t('copied') : t('copy') }}
+              </button>
+              <pre class="yaml">{{ renderFor(a) }}</pre>
+            </div>
           </details>
           <div class="row">
-            <button class="btn ghost small" @click="copy(a.fileName, renderFor(a))">
-              {{ copied === a.fileName ? t('copied') : t('copy') }}
-            </button>
             <button class="btn secondary small" @click="download(a.fileName, renderFor(a))">{{ t('download') }}</button>
           </div>
           <div v-if="commandsFor(a).length" class="commands">

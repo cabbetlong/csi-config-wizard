@@ -70,6 +70,13 @@ describe('App 端到端（组件级）', () => {
     expect(wrapper.find('.err-summary').exists()).toBe(false)
     expect(wrapper.find('.err').exists()).toBe(false)
 
+    // 协议字段已隐藏（由场景驱动），只显示提示文案，无协议下拉框
+    expect(wrapper.text()).toContain('来自场景选择')
+    const protoField = wrapper
+      .findAll('.field')
+      .find((f) => f.text().includes('协议'))
+    expect(protoField).toBeFalsy()
+
     // 点击"下一步" → 展开该步错误
     await wrapper.find('button.primary').trigger('click')
     await flushPromises()

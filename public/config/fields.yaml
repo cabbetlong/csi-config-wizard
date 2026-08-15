@@ -52,7 +52,7 @@ fields:
     label_en: Controller Replicas
     type: number
     default: 1
-    level: advanced
+    level: basic
     validate: {min: 1, max: 10}
     help_zh: K8s < 1.17 必须为 1
     help_en: Must be 1 on K8s < 1.17
@@ -148,9 +148,9 @@ fields:
     type: select
     required: true
     options_from: family.protocols
-    level: basic
-    help_zh: 由产品系列 + 业务类型决定可用协议；默认带出场景选择的协议
-    help_en: Available protocols from product series + service type; defaults to the scenario protocol
+    level: hidden          # 由场景选择驱动（store 随场景同步），不在表单中渲染
+    help_zh: 直接使用场景中选择的协议；如需要更换请回到场景页修改
+    help_en: Driven by the scenario protocol; change it on the scenario page
   - id: backend.portals
     label_zh: Portal 地址
     label_en: Portals
@@ -268,7 +268,7 @@ fields:
     label_zh: 允许卷扩容
     label_en: Allow Volume Expansion
     type: bool
-    default: false
+    default: true
     level: advanced
   - id: sc.qos
     label_zh: QoS

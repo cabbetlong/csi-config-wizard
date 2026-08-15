@@ -21,6 +21,7 @@ nav.reset: 重新开始
 result.downloadAll: 全部下载
 backend.add: 添加后端
 backend.remove: 删除
+backend.protocolNote: 协议：{protocol}（来自场景选择，如需更换请回到场景页）
 list.add: 添加
 backend.card: 后端 {n}
 advanced.toggle: 高级选项

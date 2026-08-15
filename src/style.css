@@ -256,6 +256,22 @@ a:hover {
 .yaml-collapse[open] summary {
   margin-bottom: 4px;
 }
+.yaml-wrap {
+  position: relative;
+}
+.yaml-copy {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+  z-index: 2;
+}
+.yaml-wrap:hover .yaml-copy {
+  opacity: 1;
+  pointer-events: auto;
+}
 
 .split {
   display: grid;

@@ -20,6 +20,7 @@ nav.reset: Start Over
 result.downloadAll: Download All
 backend.add: Add Backend
 backend.remove: Remove
+backend.protocolNote: "Protocol: {protocol} (from the scenario; change it on the scenario page)"
 list.add: Add
 backend.card: Backend {n}
 advanced.toggle: Advanced Options

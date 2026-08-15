@@ -117,6 +117,7 @@ describe('Golden：闪存块服务 iSCSI + Kubernetes', () => {
         '  allocType: thin',
         '  fsType: xfs',
         'reclaimPolicy: Delete',
+        'allowVolumeExpansion: true',
         '',
       ].join('\n'),
     )

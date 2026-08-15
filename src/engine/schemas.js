@@ -42,7 +42,7 @@ const fieldSchema = {
     },
     required: { type: 'boolean' },
     default: {},
-    level: { enum: ['basic', 'advanced'] },
+    level: { enum: ['basic', 'advanced', 'hidden'] },
     options: { type: 'array', items: { type: 'string' } },
     options_from: { enum: ['family.protocols', 'state.backends', 'state.backendPools'] },
     item: { type: 'object', properties: { type: { type: 'string' }, validate: { type: 'object' } }, additionalProperties: true },

@@ -218,6 +218,14 @@ export function createStore(config) {
       const family = config.families.find((f) => f.id === state.scenario.familyId)
       state.scenario.protocol = family?.serviceTypes?.[value]?.defaultProtocol ?? null
     }
+    // 协议由场景统一驱动（优化）：同步所有后端，并清空协议相关的条件字段
+    if (key === 'protocol' || key === 'serviceType' || key === 'familyId') {
+      for (const b of state.backends) {
+        b.protocol = state.scenario.protocol
+        b.portals = []
+        b.scsiHosts = []
+      }
+    }
     resetScenarioDependents()
   }
 
