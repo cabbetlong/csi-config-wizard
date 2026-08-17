@@ -2,6 +2,7 @@
 // 结果页（Q8=A）：按部署顺序展示全部产物（下载/复制）+ 部署命令。
 import { computed, ref } from 'vue'
 import { useI18n } from '../composables/useI18n.js'
+import { copyText } from '../utils/clipboard.js'
 
 const props = defineProps({ store: { type: Object, required: true } })
 const { t } = useI18n(props.store)
@@ -26,12 +27,9 @@ function goToStep(step) {
   props.store.state.step = props.store.config.flow.findIndex((s) => s.id === step.id) + 1
 }
 async function copy(name, text) {
-  try {
-    await navigator.clipboard.writeText(text)
+  if (await copyText(text)) {
     copied.value = name
     setTimeout(() => (copied.value = ''), 1500)
-  } catch {
-    /* ignore */
   }
 }
 function download(name, text) {
@@ -56,7 +54,7 @@ function downloadAll() {
   <section class="panel">
     <div class="result-head">
       <h2>{{ t('result.title') }}</h2>
-      <button class="btn secondary small" @click="downloadAll">⬇ {{ t('result.downloadAll') }}</button>
+      <button class="btn primary small" @click="downloadAll">⬇ {{ t('result.downloadAll') }}</button>
     </div>
     <p class="muted">{{ t('result.hint') }}</p>
 
@@ -73,36 +71,39 @@ function downloadAll() {
       </button>
     </div>
 
-    <!-- 执行顺序 -->
-    <h3>① {{ t('result.order') }}</h3>
+    <!-- 执行顺序（部署流水线：顺序即信息） -->
+    <h3>{{ t('result.order') }}</h3>
     <div class="order-list">
       <div v-for="(a, i) in artifacts" :key="a.id + i" class="order-item">
         <span class="order-idx">{{ i + 1 }}</span>
         <div class="order-body">
-          <div class="order-title">
-            <strong>{{ a[`label_${store.state.language}`] }}</strong>
-            <code>{{ a.fileName }}</code>
-            <span v-if="a.multi" class="badge">oceanctl</span>
-            <span v-else-if="a.id === 'storageclass'" class="badge">kubectl</span>
-            <span v-else-if="a.id === 'pvc'" class="badge">kubectl</span>
-            <span v-else class="badge">helm</span>
-          </div>
-          <details class="yaml-collapse">
-            <summary>YAML</summary>
-            <div class="yaml-wrap">
+          <div class="artifact-card">
+            <div class="artifact-head">
+              <strong>{{ a[`label_${store.state.language}`] }}</strong>
+              <code class="artifact-file">{{ a.fileName }}</code>
+              <span v-if="a.multi" class="badge badge-tool">oceanctl</span>
+              <span v-else-if="a.id === 'storageclass'" class="badge badge-tool">kubectl</span>
+              <span v-else-if="a.id === 'pvc'" class="badge badge-tool">kubectl</span>
+              <span v-else class="badge badge-tool">helm</span>
+              <span class="spacer"></span>
               <button class="btn ghost small yaml-copy" @click="copy(a.fileName, renderFor(a))">
                 {{ copied === a.fileName ? t('copied') : t('copy') }}
               </button>
-              <pre class="yaml">{{ renderFor(a) }}</pre>
+              <button class="btn secondary small" @click="download(a.fileName, renderFor(a))">
+                {{ t('download') }}
+              </button>
             </div>
-          </details>
-          <div class="row">
-            <button class="btn secondary small" @click="download(a.fileName, renderFor(a))">{{ t('download') }}</button>
-          </div>
-          <div v-if="commandsFor(a).length" class="commands">
-            <div v-for="(c, ci) in commandsFor(a)" :key="ci" class="cmd-block">
-              <p class="muted">{{ c[`text_${store.state.language}`] ?? c.text_zh ?? c.text_en }}</p>
-              <pre class="code">{{ c.code }}</pre>
+            <details class="yaml-collapse">
+              <summary>YAML</summary>
+              <div class="yaml-wrap">
+                <pre class="yaml">{{ renderFor(a) }}</pre>
+              </div>
+            </details>
+            <div v-if="commandsFor(a).length" class="commands">
+              <div v-for="(c, ci) in commandsFor(a)" :key="ci" class="cmd-block">
+                <p class="muted">{{ c[`text_${store.state.language}`] ?? c.text_zh ?? c.text_en }}</p>
+                <pre class="code">{{ c.code }}</pre>
+              </div>
             </div>
           </div>
         </div>

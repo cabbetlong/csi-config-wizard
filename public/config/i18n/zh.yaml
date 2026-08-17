@@ -7,6 +7,7 @@ nav.backend: 存储后端
 nav.storageclass: 存储类
 nav.pvc: 持久卷声明
 nav.result: 结果
+scenario.summary: 当前场景
 scenario.title: 配置场景
 scenario.hint: 选择与配置直接相关的场景信息，后续步骤将自动带出推荐值，均可修改。
 scenario.start: 进入向导
@@ -27,6 +28,7 @@ list.add: 添加
 backend.card: 后端 {n}
 advanced.toggle: 高级选项
 preview.title: 生成预览
+preview.valid: 校验通过
 download: 下载
 copy: 复制
 copied: 已复制

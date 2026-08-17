@@ -5,6 +5,7 @@ import { computed, ref } from 'vue'
 import { useI18n } from '../composables/useI18n.js'
 import { evalCondition } from '../engine/conditions.js'
 import { validateAllFields } from '../engine/validator.js'
+import { copyText } from '../utils/clipboard.js'
 import FieldInput from './FieldInput.vue'
 
 const props = defineProps({
@@ -119,28 +120,35 @@ const previewText = computed(() => {
   return props.store.renderArtifact(props.step.id)
 })
 
+// 预览卡片文件名（多后端按当前后端命名）
+const fileName = computed(() => {
+  if (!isMulti.value) return props.step.file
+  const b = props.store.state.backends[props.store.state.activeBackend]
+  return b ? `backend-${(b.name || 'unnamed').toLowerCase()}.yaml` : props.step.file
+})
+
+// 校验状态徽标：预览即产物，实时反映可部署性
+const status = computed(() =>
+  hasErrors.value
+    ? { kind: 'err', text: `⚠ ${t('err.summary', { n: Object.keys(errors.value).length })}` }
+    : { kind: 'ok', text: `✓ ${t('preview.valid')}` },
+)
+
 function download() {
-  const name =
-    isMulti.value && props.store.state.backends[props.store.state.activeBackend]
-      ? `backend-${(props.store.state.backends[props.store.state.activeBackend].name || 'unnamed').toLowerCase()}.yaml`
-      : props.step.file
   const blob = new Blob([previewText.value], { type: 'application/yaml' })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
   a.href = url
-  a.download = name
+  a.download = fileName.value
   a.click()
   URL.revokeObjectURL(url)
 }
 
 const copied = ref(false)
 async function copy() {
-  try {
-    await navigator.clipboard.writeText(previewText.value)
+  if (await copyText(previewText.value)) {
     copied.value = true
     setTimeout(() => (copied.value = false), 1500)
-  } catch {
-    /* ignore */
   }
 }
 
@@ -179,9 +187,8 @@ function prev() {
     <div class="form-col">
       <h2>{{ fieldLabel(step) }}</h2>
       <p v-if="stepDesc" class="muted step-desc">{{ stepDesc }}</p>
-      <p class="artifact-line"><code>{{ step.file }}</code><span v-if="artifactTool" class="badge">{{ artifactTool }}</span></p>
 
-      <!-- 多后端：卡片切换 -->
+      <!-- 多后端：卡片切换（名称 + 协议标签） -->
       <div v-if="isMulti" class="cards">
         <button
           v-for="(b, i) in store.state.backends"
@@ -190,12 +197,17 @@ function prev() {
           :class="{ active: i === store.state.activeBackend }"
           @click="store.state.activeBackend = i"
         >
-          {{ t('backend.card', { n: i + 1 }) }}: {{ b.name || '…' }}
+          {{ t('backend.card', { n: i + 1 }) }} · {{ b.name || '…' }}
+          <span v-if="b.protocol" class="chip-tag">{{ t('protocol.' + b.protocol) }}</span>
         </button>
         <button class="chip add" @click="addBackend">+ {{ t('backend.add') }}</button>
       </div>
-      <button v-if="isMulti && store.state.backends.length > 1" class="btn ghost small" @click="removeBackend(store.state.activeBackend)">
-        {{ t('backend.remove') }} {{ t('backend.card', { n: store.state.activeBackend + 1 }) }}
+      <button
+        v-if="isMulti && store.state.backends.length > 1"
+        class="btn ghost small backend-remove"
+        @click="removeBackend(store.state.activeBackend)"
+      >
+        ✕ {{ t('backend.remove') }} {{ t('backend.card', { n: store.state.activeBackend + 1 }) }}
       </button>
 
       <div class="fields">
@@ -212,7 +224,10 @@ function prev() {
       </div>
 
       <details v-if="advancedFields.length" class="advanced">
-        <summary>{{ t('advanced.toggle') }}</summary>
+        <summary>
+          {{ t('advanced.toggle') }}
+          <span class="adv-count">{{ advancedFields.length }}</span>
+        </summary>
         <div class="fields">
           <FieldInput
             v-for="f in visibleAdvancedFields"
@@ -230,21 +245,26 @@ function prev() {
       <div v-if="showSummary" class="err-summary">⚠ {{ t('err.summary', { n: Object.keys(errors).length }) }}</div>
 
       <div class="actions">
-        <button class="btn secondary" @click="prev">{{ t('step.back') }}</button>
+        <button class="btn secondary" @click="prev">← {{ t('step.back') }}</button>
         <button class="btn primary" @click="next">
           {{ stepIndex === store.config.flow.length - 1 ? t('step.viewResult') : t('step.next') }}
+          <span class="arrow">→</span>
         </button>
       </div>
     </div>
 
     <div class="preview-col">
-      <div class="preview-head">
-        <span>{{ t('preview.title') }}</span>
-        <span class="spacer"></span>
-        <button class="btn ghost small" @click="copy">{{ copied ? t('copied') : t('copy') }}</button>
-        <button class="btn secondary small" @click="download">{{ t('download') }}</button>
+      <div class="artifact-card">
+        <div class="artifact-head">
+          <span class="artifact-file" :title="fileName">{{ fileName }}</span>
+          <span v-if="artifactTool" class="badge badge-tool">{{ artifactTool }}</span>
+          <span class="spacer"></span>
+          <span class="status-pill" :class="'pill-' + status.kind">{{ status.text }}</span>
+          <button class="btn ghost small" @click="copy">{{ copied ? t('copied') : t('copy') }}</button>
+          <button class="btn secondary small" @click="download">{{ t('download') }}</button>
+        </div>
+        <pre class="yaml">{{ previewText }}</pre>
       </div>
-      <pre class="yaml">{{ previewText }}</pre>
     </div>
   </section>
 </template>

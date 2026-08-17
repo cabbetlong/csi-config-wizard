@@ -9,6 +9,9 @@ const props = defineProps({ store: { type: Object, required: true } })
 const { t } = useI18n(props.store)
 
 // 步骤：0=场景问答，1..4=flow（安装/后端/存储类/PVC），5=结果
+// 每个产物节点标注其应用工具（部署流水线：helm → oceanctl → kubectl）
+const TOOL = { helm: 'helm', backend: 'oceanctl', sc: 'kubectl', pvc: 'kubectl' }
+
 const steps = computed(() => [
   { id: 'scenario', navKey: 'nav.scenario', view: 'scenario' },
   ...props.store.config.flow.map((s) => ({
@@ -16,11 +19,25 @@ const steps = computed(() => [
     navKey: 'nav.' + s.id,
     view: 'step',
     step: s,
+    tool: TOOL[s.artifact] ?? '',
   })),
   { id: 'result', navKey: 'nav.result', view: 'result' },
 ])
 
 const current = computed(() => steps.value[props.store.state.step] ?? steps.value[0])
+
+// 已展开错误的步骤 → 步骤条红角标计数（与"错误延迟显示"同规则）
+const badgeCounts = computed(() => {
+  const out = {}
+  const s = props.store.state
+  if (!Object.keys(s.showErrors).length) return out
+  for (const item of props.store.validateAll()) {
+    if (item.errors.length && s.showErrors[item.step.id]) {
+      out[item.step.id] = item.errors.length
+    }
+  }
+  return out
+})
 
 function go(n) {
   const last = steps.value.length - 1
@@ -57,7 +74,7 @@ function onReset() {
     <header class="navbar">
       <div class="navbar-inner">
         <div class="brand">
-          <span class="logo">▣</span>
+          <span class="logo" aria-hidden="true">▣</span>
           <div>
             <h1>{{ t('app.title') }}</h1>
             <p class="navbar-sub">{{ t('app.subtitle') }}</p>
@@ -71,7 +88,7 @@ function onReset() {
       </div>
     </header>
 
-    <nav class="stepper">
+    <nav class="stepper" aria-label="步骤">
       <button
         v-for="(s, i) in steps"
         :key="s.id"
@@ -80,24 +97,28 @@ function onReset() {
         @click="go(i)"
       >
         <span class="step-idx">{{ i < store.state.step ? '✓' : i + 1 }}</span>
-        <span>{{ t(s.navKey) }}</span>
+        <span class="step-name">{{ t(s.navKey) }}</span>
+        <span v-if="s.tool" class="step-tool">{{ s.tool }}</span>
+        <span v-if="badgeCounts[s.id]" class="step-badge">{{ badgeCounts[s.id] }}</span>
       </button>
     </nav>
 
     <main class="content">
       <transition name="toast">
-        <div v-if="store.state.notice" :key="store.state.notice.ts" class="toast">
+        <div v-if="store.state.notice" :key="store.state.notice.ts" class="toast" role="status" aria-live="polite">
           ⚠ {{ store.state.notice.text }}
         </div>
       </transition>
-      <ScenarioView v-if="current.view === 'scenario'" :store="store" @next="go(1)" />
-      <StepView v-else-if="current.view === 'step'" :store="store" :step="current.step" />
-      <ResultView v-else :store="store" />
+      <transition name="stepfade" mode="out-in">
+        <ScenarioView v-if="current.view === 'scenario'" :key="'scenario'" :store="store" @next="go(1)" />
+        <StepView v-else-if="current.view === 'step'" :key="current.id" :store="store" :step="current.step" />
+        <ResultView v-else :key="'result'" :store="store" />
+      </transition>
     </main>
 
     <footer class="foot muted">
       {{ t('app.title') }} · 适配华为 CSI {{ store.config.meta.version }} ·
-      配置数据位于 public/config/（加配置不改代码）
+      配置数据位于 <code>public/config/</code>（加配置不改代码）
     </footer>
   </div>
 </template>

@@ -3,3 +3,8 @@ dist/
 src/config/embedded.mjs
 *.log
 .DS_Store
+
+# pi 工具元数据（非项目文件）
+.agents/
+.pi/
+skills-lock.json

@@ -34,6 +34,7 @@ const options = computed(() => {
 
 const isList = computed(() => props.field.type === 'list')
 const isKV = computed(() => props.field.type === 'key-value-list')
+const required = computed(() => !!props.field.required || !!props.field.required_when)
 
 function set(v) {
   emit('update', v)
@@ -66,13 +67,18 @@ function addKV() {
   <div class="field" :class="{ 'has-error': error }">
     <!-- bool：复选框在 label 前，同一行 -->
     <label v-if="field.type === 'bool'" class="check">
-      <input type="checkbox" :checked="!!value" @change="set($event.target.checked); touch()" />
+      <input
+        type="checkbox"
+        :checked="!!value"
+        :aria-invalid="error ? 'true' : 'false'"
+        @change="set($event.target.checked); touch()"
+      />
       <span class="field-label">
-        {{ fieldLabel(field) }}<span v-if="field.required || field.required_when" class="req">*</span>
+        {{ fieldLabel(field) }}<span v-if="required" class="req">*</span>
       </span>
     </label>
     <span v-else class="field-label">
-      {{ fieldLabel(field) }}<span v-if="field.required || field.required_when" class="req">*</span>
+      {{ fieldLabel(field) }}<span v-if="required" class="req">*</span>
     </span>
 
     <!-- text -->
@@ -81,6 +87,7 @@ function addKV() {
       type="text"
       :value="value ?? ''"
       :placeholder="fieldPlaceholder(field)"
+      :aria-invalid="error ? 'true' : 'false'"
       @input="set($event.target.value)"
       @blur="touch"
     />
@@ -90,12 +97,18 @@ function addKV() {
       v-else-if="field.type === 'number'"
       type="number"
       :value="value ?? ''"
+      :aria-invalid="error ? 'true' : 'false'"
       @input="set($event.target.value === '' ? undefined : Number($event.target.value))"
       @blur="touch"
     />
 
     <!-- select -->
-    <select v-else-if="field.type === 'select'" :value="value ?? ''" @change="set($event.target.value); touch()">
+    <select
+      v-else-if="field.type === 'select'"
+      :value="value ?? ''"
+      :aria-invalid="error ? 'true' : 'false'"
+      @change="set($event.target.value); touch()"
+    >
       <option value=""></option>
       <option v-for="o in options" :key="o.value" :value="o.value">{{ o.label }}</option>
     </select>
@@ -106,6 +119,7 @@ function addKV() {
       rows="2"
       :value="value ?? ''"
       :placeholder="fieldPlaceholder(field)"
+      :aria-invalid="error ? 'true' : 'false'"
       @input="set($event.target.value)"
       @blur="touch"
     ></textarea>
@@ -114,7 +128,7 @@ function addKV() {
     <div v-else-if="isList" class="list-editor">
       <div v-for="(item, i) in value ?? []" :key="i" class="list-row">
         <input type="text" :value="item" @input="setListItem(i, $event.target.value)" />
-        <button class="btn ghost small" @click="removeListItem(i)">✕</button>
+        <button class="btn ghost small" @click="removeListItem(i)" aria-label="移除">✕</button>
       </div>
       <button class="btn ghost small" @click="addListItem">+ {{ t('list.add') }}</button>
     </div>
@@ -124,12 +138,12 @@ function addKV() {
       <div v-for="(row, i) in value ?? []" :key="i" class="list-row">
         <input type="text" :value="row.key" placeholder="hostname" @input="setKV(i, 'key', $event.target.value)" />
         <input type="text" :value="row.value" placeholder="IP" @input="setKV(i, 'value', $event.target.value)" />
-        <button class="btn ghost small" @click="removeListItem(i)">✕</button>
+        <button class="btn ghost small" @click="removeListItem(i)" aria-label="移除">✕</button>
       </div>
       <button class="btn ghost small" @click="addKV">+ {{ t('list.add') }}</button>
     </div>
 
-    <span v-if="error" class="err">{{ error }}</span>
-    <span v-if="fieldHelp(field) && !error" class="help">{{ fieldHelp(field) }}</span>
+    <span v-if="error" class="err">⚠ {{ error }}</span>
+    <span v-else-if="fieldHelp(field)" class="help">{{ fieldHelp(field) }}</span>
   </div>
 </template>

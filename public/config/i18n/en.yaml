@@ -6,6 +6,7 @@ nav.backend: Storage Backend
 nav.storageclass: StorageClass
 nav.pvc: PersistentVolumeClaim
 nav.result: Result
+scenario.summary: Scenario
 scenario.title: Configuration Scenario
 scenario.hint: Answer config-related questions. Recommended values are pre-filled for later steps - all editable.
 scenario.start: Start Wizard
@@ -26,6 +27,7 @@ list.add: Add
 backend.card: Backend {n}
 advanced.toggle: Advanced Options
 preview.title: Generated Preview
+preview.valid: Valid
 download: Download
 copy: Copy
 copied: Copied

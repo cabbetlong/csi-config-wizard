@@ -23,11 +23,13 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div v-if="loading" class="center-page">{{ t('loading') }}</div>
-  <div v-else-if="configError" class="center-page config-error">
-    <h2>⚠️ {{ t('configError.title') }}</h2>
-    <p>{{ configError }}</p>
-    <p class="muted">{{ t('configError.hint') }}</p>
+  <div v-if="loading" class="center-page muted">
+    <span class="loading-dot" aria-hidden="true"></span>{{ t('loading') }}
+  </div>
+  <div v-else-if="configError" class="center-page">
+    <p class="config-error" role="alert">⚠️ {{ t('configError.title') }}</p>
+    <p class="mono small">{{ configError }}</p>
+    <p class="muted small">{{ t('configError.hint') }}</p>
   </div>
   <AppShell v-else :store="store" />
 </template>
