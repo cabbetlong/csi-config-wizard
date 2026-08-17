@@ -62,6 +62,9 @@ fields:
     label_en: Alloc Type          # 必填。英文 label
     type: select                  # 必填。字段类型（见下表）
     level: basic                  # 可选。basic=平铺展示，advanced=折叠进"高级选项"（默认 basic）
+                                  #   ⚠ 必填参数自动提升：advanced 字段若 required 或
+                                  #   required_when 当前为真，会被引擎提升到基础区展示（UX 规则），
+                                  #   所以必填参数写在 advanced 里也没关系——不要在高级区藏必填项
     default: thin                 # 可选。默认值（仅在字段当前可见时应用）
     required: true                # 可选。无条件必填
     options: [thin, thick]        # select 用。静态选项列表

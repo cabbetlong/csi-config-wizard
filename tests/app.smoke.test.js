@@ -126,6 +126,33 @@ describe('App 端到端（组件级）', () => {
     expect(wrapper.text()).toContain('未通过校验')
   })
 
+  it('必填高级参数自动提升到基础区（DME 的 storageDeviceSN）', async () => {
+    const wrapper = mount(App)
+    await flushPromises()
+    await new Promise((r) => setTimeout(r, 30))
+
+    // 场景页选择 DME 家族
+    const famSelect = wrapper
+      .findAll('.field')
+      .find((f) => f.find('.field-label')?.text().includes('产品系列'))
+      .find('select')
+    await famSelect.setValue('dme')
+    await flushPromises()
+
+    // 进入向导 → Step1 → Step2（存储后端）
+    await wrapper.find('button.primary').trigger('click')
+    await flushPromises()
+    await wrapper.find('button.primary').trigger('click')
+    await flushPromises()
+
+    // storageDeviceSN（DME 必填）出现在基础区，且不在"高级选项"折叠区里
+    expect(wrapper.text()).toContain('存储设备序列号')
+    const adv = wrapper.find('.advanced')
+    if (adv.exists()) {
+      expect(adv.html()).not.toContain('存储设备序列号')
+    }
+  })
+
   it('步进导航：默认后端已预置，走完四步到达结果页', async () => {
     const wrapper = mount(App)
     await flushPromises()

@@ -82,8 +82,23 @@ function filterVisible(fields) {
   const ctx = props.store.buildCtx()
   return fields.filter((f) => !f.visible_when || evalCondition(f.visible_when, ctx))
 }
-const visibleBasicFields = computed(() => filterVisible(basicFields.value))
-const visibleAdvancedFields = computed(() => filterVisible(advancedFields.value))
+
+// UX 规则：高级选项中的必填参数（required 或 required_when 当前为真）
+// 自动提升到基础区展示，避免用户不展开"高级选项"就漏填必填项。
+function requiredNow(f) {
+  const ctx = props.store.buildCtx()
+  return !!f.required || (!!f.required_when && evalCondition(f.required_when, ctx))
+}
+
+const visibleBasicFields = computed(() => {
+  const promoted = advancedFields.value.filter(requiredNow)
+  return [...filterVisible(basicFields.value), ...filterVisible(promoted)]
+})
+
+const visibleAdvancedFields = computed(() => {
+  const promotedIds = new Set(advancedFields.value.filter(requiredNow).map((f) => f.id))
+  return filterVisible(advancedFields.value.filter((f) => !promotedIds.has(f.id)))
+})
 
 // 后端多卡片
 const isMulti = computed(() => !!props.step.multi)
