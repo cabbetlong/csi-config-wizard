@@ -423,7 +423,7 @@ npm test        # 前置会自动重新生成内嵌快照（pretest）
 | 产物 | 字段 |
 |---|---|
 | scenario | familyId, serviceType, protocol, platform |
-| helm | driverName, namespace, kubeletConfigDir, imageRepo, controllerCount, snapshotEnabled, volumeUseMultipath, scsiMultipathType, nvmeMultipathType, logLevel, maxVolumesPerNode, connectorThreads, imagePullSecrets |
+| helm | driverName, namespace, kubeletConfigDir, controllerCount, snapshotEnabled, volumeUseMultipath, scsiMultipathType, nvmeMultipathType, logLevel, maxVolumesPerNode, connectorThreads, imagePullSecrets（模板与官方 helm/esdk/values.yaml 格式、注释逐行一致） |
 | backend | 基础：name, url, pools, protocol, portals, scsiHosts；高级：alua, maxClientThreads, authenticationMode, parentname（dtree）, nfsAutoAuthClient/nfsAutoAuthClientCIDRs（dtree NFS）, vstoreName（V5）, accountName（Pacific NAS/dtree）, metrovStorePairID/metroBackend（NAS 双活）, supportedTopologies, storageDeviceSN（DME 必填） |
 | sc | 基础：name, backend, pool, allocType, fsType, authClient；高级：mountOptions, reclaimPolicy, allowVolumeExpansion, qos, hyperMetro, description, restoreMode, cloneSpeed, applicationType, fsPermission, disableVerifyCapacity, volumeName, metroPairSyncSpeed（块）；waitForSplit, rootSquash, allSquash, snapshotDirectoryVisibility, reservedSnapshotSpaceRatio, advancedOptions（文件） |
 | pvc | name, accessModes, volumeMode, storage |

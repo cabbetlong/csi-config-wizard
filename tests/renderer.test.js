@@ -88,6 +88,21 @@ describe('renderTemplate', () => {
     expect(() => renderTemplate('{{#if x}}\na: 1\n', ctx)).toThrow(/缺少闭合标记/)
   })
 
+  it('{{#unless}} 取反块：条件为假时输出', () => {
+    const tmpl =
+      '{{#if helm.imagePullSecrets}}\nimagePullSecrets:\n{{#each helm.imagePullSecrets}}\n  - name: "{{this}}"\n{{/each}}\n{{/if}}\n{{#unless helm.imagePullSecrets}}\nimagePullSecrets: []\n{{/unless}}\n'
+    // 空列表 → unless 分支
+    expect(renderTemplate(tmpl, ctx)).toBe('imagePullSecrets: []\n')
+    // 非空 → if/each 分支
+    const ctx2 = {
+      ...ctx,
+      fields: { ...ctx.fields, 'helm.imagePullSecrets': ['mysecret'] },
+    }
+    expect(renderTemplate(tmpl, ctx2)).toBe(
+      'imagePullSecrets:\n  - name: "mysecret"\n',
+    )
+  })
+
   it('键值对行（scsi 字典列表）', () => {
     const tmpl = 'portals:\n{{#each backend.scsiHosts}}\n  - "{{this.key}}": "{{this.value}}"\n{{/each}}\n'
     const ctx2 = {

@@ -151,8 +151,11 @@ describe('Golden：闪存块服务 iSCSI + Kubernetes', () => {
     expect(out).toContain('driverName: csi.huawei.com')
     expect(out).toContain('kubeletConfigDir: /var/lib/kubelet')
     expect(out).toContain('namespace: huawei-csi')
-    expect(out).toContain('huaweiCSIService: "huawei-csi:4.12.0"')
+    expect(out).toContain('huaweiCSIService: huawei-csi:4.12.0')
     expect(out).toContain('level: info')
+    // 与官方 values.yaml 格式一致：空 imagePullSecrets 输出 []
+    expect(out).toContain('imagePullSecrets: []')
+    expect(out).not.toContain('{{')
     expect(() => yaml.load(out)).not.toThrow()
   })
 

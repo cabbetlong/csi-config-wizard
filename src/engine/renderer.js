@@ -1,7 +1,8 @@
 // 行级模板引擎。
 //
 // 占位符：      {{fieldId}} / {{state.x}} / {{family.x}} / {{this}} / {{this.key}} / {{index}}
-// 条件块：      {{#if <expr>}} ... {{/if}}        expr = 字段路径（真值检查）或内联 JSON 条件对象
+// 条件块：      {{#if <expr>}} ... {{/if}}         expr = 字段路径（真值检查）或内联 JSON 条件对象
+// 取反块：      {{#unless <expr>}} ... {{/unless}}  条件为假时输出（用于空列表等形态）
 // 循环块：      {{#each <listPath>}} ... {{/each}}  空列表整体不输出
 //
 // 规则：
@@ -42,8 +43,8 @@ function findBlock(lines, start, kind) {
   let depth = 0
   for (let i = start; i < lines.length; i++) {
     const line = lines[i]
-    if (/^\s*\{\{#(if|each)\b/.test(line)) depth++
-    else if (/^\s*\{\{\/(if|each)\}\}\s*$/.test(line)) {
+    if (/^\s*\{\{#(if|unless|each)\b/.test(line)) depth++
+    else if (/^\s*\{\{\/(if|unless|each)\}\}\s*$/.test(line)) {
       if (depth === 0) return { content, next: i + 1 }
       depth--
     }
@@ -59,11 +60,18 @@ export function renderLines(lines, ctx) {
     const line = lines[i]
     const ifm = line.match(/^\s*\{\{#if\s+(.+?)\s*\}\}\s*$/)
     if (ifm) {
-      const expr = ifm[1]
-      const cond = parseExpr(expr)
+      const cond = parseExpr(ifm[1])
       const { content, next } = findBlock(lines, i + 1, 'if')
       i = next
       if (evalCondition(cond, ctx)) out.push(...renderLines(content, ctx))
+      continue
+    }
+    const unlessm = line.match(/^\s*\{\{#unless\s+(.+?)\s*\}\}\s*$/)
+    if (unlessm) {
+      const cond = parseExpr(unlessm[1])
+      const { content, next } = findBlock(lines, i + 1, 'unless')
+      i = next
+      if (!evalCondition(cond, ctx)) out.push(...renderLines(content, ctx))
       continue
     }
     const eachm = line.match(/^\s*\{\{#each\s+([\w.]+)\s*\}\}\s*$/)

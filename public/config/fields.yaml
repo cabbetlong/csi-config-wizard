@@ -38,15 +38,6 @@ fields:
     level: basic
     help_zh: 由平台预设自动带出（Tanzu/CCE 不同），可手动修改
     help_en: Preset by platform (differs on Tanzu/CCE); editable
-  - id: helm.imageRepo
-    label_zh: 镜像仓库前缀
-    label_en: Image Registry Prefix
-    type: text
-    level: basic
-    placeholder_zh: 留空使用官方镜像名
-    placeholder_en: Empty = official image names
-    help_zh: 内网环境镜像仓库地址，如 swr.cn-north-4.myhuaweicloud.com/huawei
-    help_en: Private registry prefix, e.g. swr.cn-north-4.myhuaweicloud.com/huawei
   - id: helm.controllerCount
     label_zh: Controller 副本数
     label_en: Controller Replicas
@@ -93,9 +84,10 @@ fields:
     label_zh: 每节点最大卷数
     label_en: Max Volumes Per Node
     type: number
-    default: 100
     level: advanced
     validate: {min: 0, max: 1000}
+    help_zh: 不填则保持官方默认（不限制）；填写后输出生效行
+    help_en: Empty keeps the official default (unlimited); setting it outputs the active line
   - id: helm.connectorThreads
     label_zh: 连接线程数
     label_en: Connector Threads

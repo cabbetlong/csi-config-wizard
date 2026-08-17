@@ -122,9 +122,6 @@ export function createStore(config) {
         ? state.backends[backendIndex]
         : state.backends[state.activeBackend] ?? {}
     const backendNames = state.backends.map((b) => b.name)
-    const imagePrefix = state.helm.imageRepo
-      ? String(state.helm.imageRepo).replace(/\/+$/, '') + '/'
-      : ''
 
     const fields = {}
     for (const [k, v] of Object.entries(state.scenario)) fields['scenario.' + k] = v
@@ -144,7 +141,6 @@ export function createStore(config) {
         scBackend: state.sc.backend,
         driverName: state.helm.driverName,
         namespace: state.helm.namespace,
-        imagePrefix,
         backendName: backend.name,
         volumeType: service?.volumeType,
         storage: service?.storage,
