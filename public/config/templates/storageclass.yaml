@@ -23,6 +23,45 @@ parameters:
   {{#if sc.hyperMetro}}
   hyperMetro: "{{sc.hyperMetro}}"
   {{/if}}
+  {{#if sc.restoreMode}}
+  restoreMode: "{{sc.restoreMode}}"
+  {{/if}}
+  {{#if sc.cloneSpeed}}
+  cloneSpeed: "{{sc.cloneSpeed}}"
+  {{/if}}
+  {{#if sc.applicationType}}
+  applicationType: "{{sc.applicationType}}"
+  {{/if}}
+  {{#if sc.fsPermission}}
+  fsPermission: "{{sc.fsPermission}}"
+  {{/if}}
+  {{#if sc.disableVerifyCapacity}}
+  disableVerifyCapacity: "{{sc.disableVerifyCapacity}}"
+  {{/if}}
+  {{#if sc.volumeName}}
+  volumeName: "{{sc.volumeName}}"
+  {{/if}}
+  {{#if sc.metroPairSyncSpeed}}
+  metroPairSyncSpeed: "{{sc.metroPairSyncSpeed}}"
+  {{/if}}
+  {{#if sc.waitForSplit}}
+  waitForSplit: "{{sc.waitForSplit}}"
+  {{/if}}
+  {{#if sc.rootSquash}}
+  rootSquash: "{{sc.rootSquash}}"
+  {{/if}}
+  {{#if sc.allSquash}}
+  allSquash: "{{sc.allSquash}}"
+  {{/if}}
+  {{#if sc.snapshotDirectoryVisibility}}
+  snapshotDirectoryVisibility: "{{sc.snapshotDirectoryVisibility}}"
+  {{/if}}
+  {{#if sc.reservedSnapshotSpaceRatio}}
+  reservedSnapshotSpaceRatio: "{{sc.reservedSnapshotSpaceRatio}}"
+  {{/if}}
+  {{#if sc.advancedOptions}}
+  advancedOptions: {{sc.advancedOptions}}
+  {{/if}}
 {{#if sc.reclaimPolicy}}
 reclaimPolicy: "{{sc.reclaimPolicy}}"
 {{/if}}

@@ -1,5 +1,10 @@
 # 产品系列 × 业务类型 × 协议矩阵（Q17=B：先问产品系列）。
-# 事实来源：css-docs v4.12.0 兼容性与特性矩阵。
+# 事实来源：css-docs 当前文档树（v4.12.0），逐页核实：
+#   - NVMe over RoCE 协议值为 roce-nvme（roce 已弃用）；NVMe over TCP 为 tcp-nvme
+#   - DataTurbo 协议值为 dtfs（A600/A800 与 DME）
+#   - A600/A800：本地文件系统/文件系统（dtree）→ oceanstor-a-series-nas / -dtree
+#   - DME 互联：全局文件系统 → oceanstor-a-series-nas（需顶层 storageDeviceSN）
+#   - OceanDisk NAS 的 storage 为 oceanstor-nas
 # 新增系列/业务类型/协议 = 在此加数据，无需改代码。
 families:
   - id: flash
@@ -12,7 +17,7 @@ families:
         storage: oceanstor-san
         volumeType: lun
         defaultProtocol: iscsi
-        protocols: [fc, iscsi, nvme-roce, nvme-fc, nvme-tcp]
+        protocols: [fc, iscsi, roce-nvme, fc-nvme, tcp-nvme]
       file:
         label_zh: 文件服务
         label_en: File Service
@@ -27,6 +32,37 @@ families:
         volumeType: dtree
         defaultProtocol: nfs
         protocols: [nfs, nfs+]
+
+  - id: a-series
+    label_zh: 闪存存储（OceanStor A600/A800）
+    label_en: Flash Storage (OceanStor A600/A800)
+    serviceTypes:
+      file:
+        label_zh: 本地文件系统
+        label_en: Local File System
+        storage: oceanstor-a-series-nas
+        volumeType: fs
+        defaultProtocol: nfs
+        protocols: [nfs, dtfs]
+      dtree:
+        label_zh: 文件系统（Dtree）
+        label_en: File System (Dtree)
+        storage: oceanstor-a-series-dtree
+        volumeType: dtree
+        defaultProtocol: nfs
+        protocols: [nfs, dtfs]
+
+  - id: dme
+    label_zh: DME 互联（OceanStor A800 集群）
+    label_en: DME Interconnection (OceanStor A800 Cluster)
+    serviceTypes:
+      file:
+        label_zh: 全局文件系统
+        label_en: Global File System
+        storage: oceanstor-a-series-nas
+        volumeType: fs
+        defaultProtocol: nfs
+        protocols: [nfs, dtfs]
 
   - id: pacific
     label_zh: 海量存储（OceanStor Pacific / FusionStorage）
@@ -64,4 +100,11 @@ families:
         storage: oceandisk-san
         volumeType: lun
         defaultProtocol: iscsi
-        protocols: [fc, iscsi, nvme-roce]
+        protocols: [fc, iscsi, roce-nvme]
+      file:
+        label_zh: 文件服务
+        label_en: File Service
+        storage: oceanstor-nas
+        volumeType: fs
+        defaultProtocol: nfs
+        protocols: [nfs]

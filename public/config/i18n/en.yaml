@@ -51,13 +51,14 @@ serviceType.file: File Service
 serviceType.dtree: File System (Dtree)
 protocol.fc: FC
 protocol.iscsi: iSCSI
-protocol.nvme-roce: NVMe over RoCE
-protocol.nvme-fc: NVMe over FC
-protocol.nvme-tcp: NVMe over TCP
+protocol.roce-nvme: NVMe over RoCE
+protocol.fc-nvme: NVMe over FC
+protocol.tcp-nvme: NVMe over TCP
 protocol.nfs: NFS
 protocol.nfs+: NFS+
 protocol.dpc: DPC
 protocol.scsi: SCSI
+protocol.dtfs: DataTurbo
 platform.k8s: Kubernetes
 platform.openshift: OpenShift
 platform.tanzu: Tanzu (TKGI)

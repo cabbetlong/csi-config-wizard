@@ -41,6 +41,16 @@ describe('renderTemplate', () => {
     expect(renderTemplate('qos: {{sc.qos}}', ctx)).toBe("qos: '{\"MAXBANDWIDTH\":999}'")
   })
 
+  it('超长数字串（ESN）按字符串加引号保留精度', () => {
+    const ctx2 = {
+      ...ctx,
+      fields: { ...ctx.fields, 'backend.storageDeviceSN': '21000000000000000000' },
+    }
+    expect(renderTemplate('storageDeviceSN: {{backend.storageDeviceSN}}', ctx2)).toBe(
+      'storageDeviceSN: "21000000000000000000"',
+    )
+  })
+
   it('{{#each}} 渲染列表', () => {
     const tmpl = 'pools:\n{{#each backend.pools}}\n  - "{{this}}"\n{{/each}}\n'
     expect(renderTemplate(tmpl, ctx)).toBe('pools:\n  - Pool001\n  - Pool002\n')

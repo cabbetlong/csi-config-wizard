@@ -16,7 +16,8 @@ export function quoteScalar(value) {
     return '|\n' + body
   }
   if (
-    /[:{}\[\],#&*!|>'"%@`\t]|^\s|\s$|^[-?:]$|^[~]$|^(true|false|null|yes|no|on|off)$/i.test(s)
+    /[:{}\[\],#&*!|>'"%@`\t]|^\s|\s$|^[-?:]$|^[~]$|^(true|false|null|yes|no|on|off)$/i.test(s) ||
+    /^\d{16,}$/.test(s) // 超长数字串（如 20 位 ESN）按字符串保留精度
   ) {
     if (s.includes('"')) {
       return "'" + s.replace(/'/g, "''") + "'"

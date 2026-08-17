@@ -422,6 +422,8 @@ npm test        # 前置会自动重新生成内嵌快照（pretest）
 |---|---|
 | scenario | familyId, serviceType, protocol, platform |
 | helm | driverName, namespace, kubeletConfigDir, imageRepo, controllerCount, snapshotEnabled, volumeUseMultipath, scsiMultipathType, nvmeMultipathType, logLevel, maxVolumesPerNode, connectorThreads, imagePullSecrets |
-| backend | name, url, pools, protocol, portals, scsiHosts, alua, maxClientThreads, authenticationMode |
-| sc | name, backend, pool, allocType, fsType, authClient, mountOptions, reclaimPolicy, allowVolumeExpansion, qos, hyperMetro, description |
+| backend | 基础：name, url, pools, protocol, portals, scsiHosts；高级：alua, maxClientThreads, authenticationMode, parentname（dtree）, nfsAutoAuthClient/nfsAutoAuthClientCIDRs（dtree NFS）, vstoreName（V5）, accountName（Pacific NAS/dtree）, metrovStorePairID/metroBackend（NAS 双活）, supportedTopologies, storageDeviceSN（DME 必填） |
+| sc | 基础：name, backend, pool, allocType, fsType, authClient；高级：mountOptions, reclaimPolicy, allowVolumeExpansion, qos, hyperMetro, description, restoreMode, cloneSpeed, applicationType, fsPermission, disableVerifyCapacity, volumeName, metroPairSyncSpeed（块）；waitForSplit, rootSquash, allSquash, snapshotDirectoryVisibility, reservedSnapshotSpaceRatio, advancedOptions（文件） |
 | pvc | name, accessModes, volumeMode, storage |
+
+> 协议取值（与官方文档一致）：fc / iscsi / **roce-nvme**（NVMe over RoCE，roce 已弃用）/ fc-nvme / **tcp-nvme** / nfs / nfs+ / dpc / scsi / **dtfs**（DataTurbo）。
