@@ -153,6 +153,63 @@ describe('App 端到端（组件级）', () => {
     }
   })
 
+  it('双活：勾选后自动创建对端后端，双活参数进基础区，取消后级联移除', async () => {
+    const wrapper = mount(App)
+    await flushPromises()
+    await new Promise((r) => setTimeout(r, 30))
+
+    // 进入 Step2（存储后端）
+    await wrapper.find('button.primary').trigger('click')
+    await flushPromises()
+    await wrapper.find('button.primary').trigger('click')
+    await flushPromises()
+
+    // 勾选"双活（HyperMetro）"复选框
+    const metroField = wrapper
+      .findAll('.field')
+      .find((f) => f.find('.field-label')?.text().includes('HyperMetro'))
+    expect(metroField).toBeTruthy()
+    await metroField.find('input[type="checkbox"]').setValue(true)
+    await flushPromises()
+
+    // 自动创建对端后端：卡片数 +1，名字为 backend-1-metro
+    expect(wrapper.findAll('button.chip').length).toBeGreaterThanOrEqual(2)
+    expect(wrapper.text()).toContain('backend-1-metro')
+    // 双活参数显示在基础区（配对 ID、对端后端）
+    expect(wrapper.text()).toContain('双活配对 ID')
+    expect(wrapper.text()).toContain('对端后端')
+
+    // 填配对 ID → 对端同步（切到对端卡片，其配对 ID 输入框有相同值）
+    const pairField = wrapper
+      .findAll('.field')
+      .find((f) => f.find('.field-label')?.text().includes('配对 ID'))
+    await pairField.find('input').setValue('metro-pair-01')
+    await flushPromises()
+    const peerChip = wrapper
+      .findAll('button.chip')
+      .find((c) => c.text().includes('backend-1-metro'))
+    await peerChip.trigger('click')
+    await flushPromises()
+    const peerPair = wrapper
+      .findAll('.field')
+      .find((f) => f.find('.field-label')?.text().includes('配对 ID'))
+    expect(peerPair.find('input').element.value).toBe('metro-pair-01')
+
+    // 取消勾选 → 对端后端被级联移除（先切回原后端卡片）
+    await wrapper
+      .findAll('button.chip')
+      .find((c) => c.text().includes('后端 1'))
+      .trigger('click')
+    await flushPromises()
+    await wrapper
+      .findAll('.field')
+      .find((f) => f.find('.field-label')?.text().includes('HyperMetro'))
+      .find('input[type="checkbox"]')
+      .setValue(false)
+    await flushPromises()
+    expect(wrapper.text()).not.toContain('backend-1-metro')
+  })
+
   it('步进导航：默认后端已预置，走完四步到达结果页', async () => {
     const wrapper = mount(App)
     await flushPromises()

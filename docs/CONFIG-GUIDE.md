@@ -280,6 +280,8 @@ visible_when: {field: backend.protocol, eq: scsi}
 
 **注意**：新后端字段的 `default` 只会在**新建后端时**按当前可见性应用；对已存在的后端不追溯。改默认值后建议清一下浏览器 localStorage 再验证。
 
+**双活（HyperMetro）**：`backend.hyperMetro` 复选框勾选后自动创建对端后端（`<名>-metro`），两端互填 `metroBackend`、配对 ID（`metrovStorePairID`）双向同步（代码行为，非配置数据）；取消勾选或删除一侧会级联移除对端。配对 ID 必填（`required_when: {field: backend.hyperMetro, eq: true}`）。
+
 ---
 
 ### 7.4 Step3 存储类（`sc.*` 字段）

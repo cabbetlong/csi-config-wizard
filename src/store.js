@@ -174,17 +174,36 @@ export function createStore(config) {
       if (key === 'backend') state.sc.pool = undefined
     } else if (artifact === 'pvc') state.pvc[key] = value
     else if (artifact === 'backend' && state.backends[state.activeBackend]) {
+      const b = state.backends[state.activeBackend]
+      const i = state.activeBackend
       // 协议是全局共享值：修改联动更新场景与所有后端，并清空协议相关条件字段
       if (key === 'protocol') {
         state.scenario.protocol = value
-        for (const b of state.backends) {
-          b.protocol = value
-          b.portals = []
-          b.scsiHosts = []
+        for (const bb of state.backends) {
+          bb.protocol = value
+          bb.portals = []
+          bb.scsiHosts = []
         }
         return
       }
-      state.backends[state.activeBackend][key] = value
+      // 双活：勾选/取消 → 自动创建/级联移除对端后端
+      if (key === 'hyperMetro') {
+        toggleHyperMetro(i, !!value)
+        return
+      }
+      // 双活：配对 ID 修改 → 同步到对端
+      if (key === 'metrovStorePairID') {
+        b.metrovStorePairID = value
+        const peer = peerOf(i)
+        if (peer) peer.metrovStorePairID = value
+        return
+      }
+      // 重命名 → 同步对端引用
+      if (key === 'name') {
+        renameBackend(i, value)
+        return
+      }
+      b[key] = value
     }
   }
 
@@ -244,6 +263,72 @@ export function createStore(config) {
   }
 
   // ---------- 后端管理 ----------
+  // 双活（HyperMetro）对端：metroPeer 存对端在后端数组中的下标；
+  // 两个后端互为对端（b.metroPeer = j 且 j.metroPeer = i）
+  function peerOf(i) {
+    const b = state.backends[i]
+    if (!b || b.metroPeer == null) return null
+    const p = state.backends[b.metroPeer]
+    return p && p.metroPeer === i ? p : null
+  }
+
+  // 从数组移除一组下标，并重映射其余后端的 metroPeer 索引
+  function spliceBackends(doomed) {
+    const map = []
+    let cursor = 0
+    for (let k = 0; k < state.backends.length; k++) {
+      if (doomed.has(k)) map.push(-1)
+      else map.push(cursor++)
+    }
+    const remaining = state.backends.filter((_, k) => !doomed.has(k))
+    for (const nb of remaining) {
+      if (nb.metroPeer != null) {
+        nb.metroPeer = map[nb.metroPeer] ?? null
+        if (nb.metroPeer < 0) nb.metroPeer = null
+      }
+    }
+    state.backends.splice(0, state.backends.length, ...remaining)
+    if (state.activeBackend >= state.backends.length) {
+      state.activeBackend = Math.max(0, state.backends.length - 1)
+    }
+  }
+
+  // 勾选/取消双活：勾选 → 自动创建对端后端（互为 metroBackend、同步配对 ID）；
+  // 取消 → 级联移除对端
+  function toggleHyperMetro(i, on) {
+    const b = state.backends[i]
+    if (!b) return
+    if (on) {
+      if (peerOf(i)) return
+      b.hyperMetro = true
+      const base = b.name || `backend-${state.backends.length + 1}`
+      const peer = addBackend()
+      peer.name = `${base}-metro`
+      peer.hyperMetro = true
+      peer.metrovStorePairID = b.metrovStorePairID || ''
+      b.metroBackend = peer.name
+      peer.metroBackend = base
+      b.metroPeer = state.backends.length - 1
+      peer.metroPeer = i
+    } else {
+      const j = b.metroPeer
+      b.hyperMetro = false
+      b.metroPeer = null
+      b.metroBackend = undefined
+      if (j != null && state.backends[j]) spliceBackends(new Set([j]))
+    }
+  }
+
+  // 重命名后端：保持双活对端的 metroBackend 引用同步
+  function renameBackend(i, newName) {
+    const b = state.backends[i]
+    const oldName = b.name
+    b.name = newName
+    if (!b.hyperMetro) return
+    const peer = peerOf(i)
+    if (peer) peer.metroBackend = newName || oldName
+  }
+
   function addBackend() {
     const family = config.families.find((f) => f.id === state.scenario.familyId)
     const service = family?.serviceTypes?.[state.scenario.serviceType]
@@ -274,10 +359,16 @@ export function createStore(config) {
   }
 
   function removeBackend(idx) {
-    state.backends.splice(idx, 1)
-    if (state.activeBackend >= state.backends.length) {
-      state.activeBackend = Math.max(0, state.backends.length - 1)
+    const b = state.backends[idx]
+    // 双活对端级联删除
+    if (b?.metroPeer != null && state.backends[b.metroPeer]) {
+      const j = b.metroPeer
+      b.metroPeer = null
+      state.backends[j].metroPeer = null
+      spliceBackends(new Set([idx, j]))
+      return
     }
+    spliceBackends(new Set([idx]))
   }
 
   // ---------- 渲染 ----------

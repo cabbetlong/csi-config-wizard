@@ -225,22 +225,30 @@ fields:
     level: advanced
     help_zh: 仅 OceanStor Pacific NAS/Dtree 账号模式下必填
     help_en: Required for OceanStor Pacific NAS/dtree under an account
+  - id: backend.hyperMetro
+    label_zh: 双活（HyperMetro）
+    label_en: HyperMetro
+    type: bool
+    level: basic
+    help_zh: 勾选后自动创建双活对端后端，并显示配对参数（配对 ID 必填，自动同步到对端）
+    help_en: Creates the HyperMetro peer backend automatically and shows pairing parameters (pair ID required, synced to the peer)
   - id: backend.metrovStorePairID
-    label_zh: 双活 vStore 对 ID
-    label_en: Metro vStore Pair ID
+    label_zh: 双活配对 ID
+    label_en: Metro Pair ID
     type: text
-    visible_when: {state: serviceType, in: [file, dtree]}
-    level: advanced
-    help_zh: NAS HyperMetro 双活；与 metroBackend 成对配置
-    help_en: NAS HyperMetro; pair with metroBackend
+    required_when: {field: backend.hyperMetro, eq: true}
+    visible_when: {field: backend.hyperMetro, eq: true}
+    level: basic
+    help_zh: 双活后端成对的配对标识（metrovStorePairID），会自动同步到对端后端
+    help_en: Pair identifier shared by the HyperMetro backends (metrovStorePairID); synced to the peer
   - id: backend.metroBackend
-    label_zh: 双活对端后端
+    label_zh: 对端后端
     label_en: Metro Backend
     type: text
-    visible_when: {field: backend.metrovStorePairID, exists: true}
-    level: advanced
-    help_zh: NAS HyperMetro 的对端后端名称
-    help_en: Peer backend name for NAS HyperMetro
+    visible_when: {field: backend.hyperMetro, eq: true}
+    level: basic
+    help_zh: 对端后端名称（勾选双活时自动创建并回填，通常无需修改）
+    help_en: Peer backend name (auto-created and filled when HyperMetro is enabled)
   - id: backend.supportedTopologies
     label_zh: 拓扑感知（JSON）
     label_en: Supported Topologies
