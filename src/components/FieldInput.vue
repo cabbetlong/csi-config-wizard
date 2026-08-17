@@ -64,7 +64,14 @@ function addKV() {
 
 <template>
   <div class="field" :class="{ 'has-error': error }">
-    <span class="field-label">
+    <!-- bool：复选框在 label 前，同一行 -->
+    <label v-if="field.type === 'bool'" class="check">
+      <input type="checkbox" :checked="!!value" @change="set($event.target.checked); touch()" />
+      <span class="field-label">
+        {{ fieldLabel(field) }}<span v-if="field.required || field.required_when" class="req">*</span>
+      </span>
+    </label>
+    <span v-else class="field-label">
       {{ fieldLabel(field) }}<span v-if="field.required || field.required_when" class="req">*</span>
     </span>
 
@@ -92,12 +99,6 @@ function addKV() {
       <option value=""></option>
       <option v-for="o in options" :key="o.value" :value="o.value">{{ o.label }}</option>
     </select>
-
-    <!-- bool -->
-    <label v-else-if="field.type === 'bool'" class="check">
-      <input type="checkbox" :checked="!!value" @change="set($event.target.checked); touch()" />
-      <span>{{ value ? 'true' : 'false' }}</span>
-    </label>
 
     <!-- textarea / json-text -->
     <textarea
