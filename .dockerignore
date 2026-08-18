@@ -1,0 +1,16 @@
+# 构建上下文精简：不进镜像、不进构建关键路径
+node_modules
+dist
+.git
+.gitignore
+.pi
+.agents
+skills-lock.json
+*.log
+.DS_Store
+docs
+tests
+docker
+docker-compose.yml
+Dockerfile
+.dockerignore

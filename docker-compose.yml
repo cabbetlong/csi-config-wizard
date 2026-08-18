@@ -1,0 +1,21 @@
+# 华为 CSI 配置向导 - 容器化部署
+#
+# 常用命令：
+#   docker compose up -d --build     # 构建并启动 → http://localhost:8080
+#   docker compose logs -f wizard    # 查看日志
+#   docker compose down              # 停止
+#
+# 详细说明见 docs/DEPLOY-DOCKER.md
+services:
+  wizard:
+    build: .
+    image: csi-config-wizard:latest
+    container_name: csi-config-wizard
+    ports:
+      - "8080:80"          # 宿主机端口可改，如 "9000:80"
+    restart: unless-stopped
+    # 可选：把配置目录挂到宿主机，改 YAML 刷新页面即生效（无需重建镜像）。
+    # 首次挂载空目录会自动回填镜像内默认配置（见 docker/30-seed-config.sh）。
+    # 配置已有内容后建议加 :ro 只读保护。
+    # volumes:
+    #   - ./docker-config:/usr/share/nginx/html/config

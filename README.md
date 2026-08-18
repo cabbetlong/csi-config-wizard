@@ -26,7 +26,10 @@ npm test           # 43 个测试：条件 DSL / 渲染器 / golden 全链路 / 
 npm run build      # 产出单文件 dist/index.html（自包含，双击即可打开）
 ```
 
-部署：把 `dist/` 整体拷贝到任意静态服务器（`base: './'`，可挂任意子路径，如随 css-docs 文档站放在 `/css-docs/wizard/`）。
+部署有两种方式：
+
+- **静态拷贝**：把 `dist/` 整体拷贝到任意静态服务器（`base: './'`，可挂任意子路径，如随 css-docs 文档站放在 `/css-docs/wizard/`）
+- **Docker（构建+部署一体）**：`docker compose up -d --build` → http://localhost:8080；支持挂载 config 卷热改配置（改 YAML 刷新即生效，无需重建镜像）。详见 [docs/DEPLOY-DOCKER.md](docs/DEPLOY-DOCKER.md)
 
 ### 两种打开方式都支持
 
