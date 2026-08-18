@@ -60,10 +60,14 @@ npm run build      # 产出单文件 dist/index.html（自包含，双击即可�
 ```
 public/config/          # 全部配置数据（运行时加载）
 src/
+  App.vue / main.js / style.css   # 入口 + 全局样式（墨蓝 + 华为红设计语言）
   engine/               # 渲染引擎（条件 DSL / 模板 / YAML 引号 / 校验 / 配置加载）
   hooks/index.js        # 代码钩子注册表（逃生门，未注册的钩子引用会报配置错误）
   store.js              # 全局状态 + localStorage + 场景级联 + 双活配对管理
-  components/           # 场景问答 / 步骤表单 / 结果页
+  components/           # 场景问答 / 步骤表单 / 结果页（AppShell/ScenarioView/StepView/FieldInput/ResultView）
+  composables/useI18n.js  # 双语文案 hook（label 就近取自字段定义）
+  config/embedded.mjs     # 构建时生成的内嵌配置快照（file:// 兜底）
+  utils/clipboard.js      # 一键复制（含不打断用户选中文本）
 scripts/embed-config.mjs # 构建时生成配置内嵌快照（file:// 兜底）
 tests/                  # vitest：conditions / renderer / golden / embedded / 组件冒烟
 .pi/skills/csi-config-wizard/   # 配置维护技能（pi 自动发现，改配置时触发）
@@ -74,5 +78,5 @@ docs/CONFIG-GUIDE.md    # 配置维护手册（分步骤操作指南）
 ## 适配范围
 
 - 锁定华为 CSI **v4.12.0**（当前文档版本），`index.yaml` 预留 `version` 字段
-- 家族矩阵与参数对照 css-docs 当前文档逐页核实；字段 60+（backend 22 / SC 26 / helm 12 / PVC 4）
+- 家族矩阵与参数对照 css-docs 当前文档逐页核实；字段共 64（场景 4 / helm 12 / backend 19 / StorageClass 25 / PVC 4）
 - 静态 PV 生成：v2
