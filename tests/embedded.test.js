@@ -12,6 +12,14 @@ describe('内嵌配置快照（embedded.mjs，由 scripts/embed-config.mjs 生�
     expect(config.families.length).toBeGreaterThanOrEqual(3)
   })
 
+  it('createStore 接受构建注入的语言（zh/en 分别构建）', async () => {
+    const config = await loadConfigEmbedded()
+    const zh = createStore(config, { language: 'zh' })
+    const en = createStore(config, { language: 'en' })
+    expect(zh.state.language).toBe('zh')
+    expect(en.state.language).toBe('en')
+  })
+
   it('与运行时路径产出完全一致（同一 store 渲染 backend）', async () => {
     const config = await loadConfigEmbedded()
     const store = createStore(config)

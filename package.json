@@ -7,7 +7,9 @@
   "scripts": {
     "dev": "vite",
     "prebuild": "node scripts/embed-config.mjs",
-    "build": "vite build",
+    "build": "node scripts/build-docs.mjs",
+    "prebuild:single": "node scripts/embed-config.mjs",
+    "build:single": "vite build",
     "preview": "vite preview",
     "pretest": "node scripts/embed-config.mjs",
     "test": "vitest run"

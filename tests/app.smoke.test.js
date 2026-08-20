@@ -29,6 +29,30 @@ beforeEach(() => {
 })
 
 describe('App 端到端（组件级）', () => {
+  it('文档嵌入版：无独立导航栏/页脚，重置按钮在内容区，无语言切换', async () => {
+    const wrapper = mount(App)
+    await flushPromises()
+    await new Promise((r) => setTimeout(r, 30))
+
+    // 去掉导航栏和底部栏
+    expect(wrapper.find('.navbar').exists()).toBe(false)
+    expect(wrapper.find('.foot').exists()).toBe(false)
+
+    // 页面标题 + 内容区重置按钮保留
+    expect(wrapper.find('.doc-header h1').text()).toContain('华为 CSI 配置向导')
+    const resetBtn = wrapper.findAll('button').find((b) => b.text().includes('重新开始'))
+    expect(resetBtn).toBeTruthy()
+
+    // 语言切换按钮已移除（中/英由构建时分别产出）
+    const langBtn = wrapper.findAll('button').find(
+      (b) => b.text().includes('English') || b.text().includes('中文'),
+    )
+    expect(langBtn).toBeFalsy()
+
+    // 步骤条仍在（核心流程导航，非外层导航栏）
+    expect(wrapper.find('nav.stepper').exists()).toBe(true)
+  })
+
   it('场景页渲染 → 点击进入向导 → Step1（CSI 安装）表单与预览有内容', async () => {
     const wrapper = mount(App)
     await flushPromises()

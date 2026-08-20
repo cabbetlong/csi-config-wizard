@@ -10,7 +10,7 @@
 | `/wizard-config/` | 默认配置备份（`public/config/` 的镜像内副本） |
 | `/etc/nginx/conf.d/default.conf` | 站点配置（见下） |
 
-构建是**多阶段**的：`node:20-alpine` 里 `npm ci && npm run build`（`prebuild` 会自动同步内嵌快照 `src/config/embedded.mjs`），产物交给 `nginx:1.27-alpine` 只做静态服务，镜像里没有 Node、没有源码。
+构建是**多阶段**的：`node:20-alpine` 里 `npm ci && npm run build:single`（`prebuild:single` 会自动同步内嵌快照 `src/config/embedded.mjs`），产物交给 `nginx:1.27-alpine` 只做静态服务，镜像里没有 Node、没有源码。Docker 使用单语言单文件构建（`dist/index.html` + `dist/config/`），文档站的双语文档嵌入版用仓库根的 `npm run build`。
 
 ## 1. 构建镜像
 

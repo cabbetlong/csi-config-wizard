@@ -18,7 +18,7 @@ RUN npm ci
 
 # 再拷贝源码与配置（public/config 会同时打进内嵌快照与 dist/config/）
 COPY . .
-RUN npm run build
+RUN npm run build:single
 
 # ---------- 阶段 2：运行 ----------
 FROM nginx:1.27-alpine

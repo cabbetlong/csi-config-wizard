@@ -25,6 +25,7 @@ const steps = computed(() => [
 ])
 
 const current = computed(() => steps.value[props.store.state.step] ?? steps.value[0])
+const stepsLabel = computed(() => (props.store.state.language === 'zh' ? '步骤' : 'Steps'))
 
 // 已展开错误的步骤 → 步骤条红角标计数（与"错误延迟显示"同规则）
 const badgeCounts = computed(() => {
@@ -59,10 +60,6 @@ function go(n) {
   props.store.state.step = Math.max(0, Math.min(last, n))
 }
 
-function toggleLang() {
-  props.store.state.language = props.store.state.language === 'zh' ? 'en' : 'zh'
-}
-
 function onReset() {
   const msg = props.store.state.language === 'zh' ? '清空当前所有配置并重新开始？' : 'Clear all configuration and start over?'
   if (typeof confirm === 'undefined' || confirm(msg)) props.store.reset()
@@ -71,24 +68,15 @@ function onReset() {
 
 <template>
   <div class="shell">
-    <header class="navbar">
-      <div class="navbar-inner">
-        <div class="brand">
-          <span class="logo" aria-hidden="true">▣</span>
-          <div>
-            <h1>{{ t('app.title') }}</h1>
-            <p class="navbar-sub">{{ t('app.subtitle') }}</p>
-          </div>
-        </div>
-        <div class="navbar-right">
-          <span class="badge badge-dark">CSI {{ store.config.meta.version }}</span>
-          <button class="btn navbar-btn" @click="onReset" :title="t('nav.reset')">↺ {{ t('nav.reset') }}</button>
-          <button class="btn navbar-btn" @click="toggleLang">{{ t('lang.switch') }}</button>
-        </div>
+    <header class="doc-header">
+      <div class="doc-header-text">
+        <h1>{{ t('app.title') }}</h1>
+        <p class="muted doc-subtitle">{{ t('app.subtitle') }}</p>
       </div>
+      <button class="btn ghost small reset-btn" @click="onReset" :title="t('nav.reset')">↺ {{ t('nav.reset') }}</button>
     </header>
 
-    <nav class="stepper" aria-label="步骤">
+    <nav class="stepper" :aria-label="stepsLabel">
       <button
         v-for="(s, i) in steps"
         :key="s.id"
@@ -115,10 +103,5 @@ function onReset() {
         <ResultView v-else :key="'result'" :store="store" />
       </transition>
     </main>
-
-    <footer class="foot muted">
-      {{ t('app.title') }} · 适配华为 CSI {{ store.config.meta.version }} ·
-      配置数据位于 <code>public/config/</code>（加配置不改代码）
-    </footer>
   </div>
 </template>

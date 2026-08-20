@@ -22,23 +22,35 @@
 ```bash
 npm install
 npm run dev        # 本地开发 http://localhost:5173
-npm test           # 43 个测试：条件 DSL / 渲染器 / golden 全链路 / 内嵌快照 / 组件冒烟
-npm run build      # 产出单文件 dist/index.html（自包含，双击即可打开）
+npm test           # 45 个测试：条件 DSL / 渲染器 / golden 全链路 / 内嵌快照 / 组件冒烟
+npm run build             # 默认：产出中英文文档嵌入版（见下方产物结构）
+npm run build:single     # 单语言单文件版本（dist/index.html，自包含，供 Docker/离线用）
+```
+
+### 文档嵌入版产物（`npm run build`）
+
+随 Hugo css-docs 部署：中英文各构建一份单文件 HTML，放回 `content/` 对应位置，由 Hugo 的 URL（`/zh-cn/…`、`/en/…`）决定展示哪套语言（页面不再内置语言切换）：
+
+```
+dist/zh-cn/docs/quick-start/wizard/index.html   # 中文嵌入版（含 config/）
+dist/en/docs/quick-start/wizard/index.html      # English embed（含 config/）
+dist/index.html                                 # 本地/Docker 打开用的根入口（重定向到中文版）
 ```
 
 部署有两种方式：
 
-- **静态拷贝**：把 `dist/` 整体拷贝到任意静态服务器（`base: './'`，可挂任意子路径，如随 css-docs 文档站放在 `/css-docs/wizard/`）
+- **文档嵌入版**：把 `dist/zh-cn/docs/quick-start/wizard/` 拷入 css-docs 的 `content/zh-cn/docs/quick-start/wizard/`（`dist/en/...` 同理），由 Hugo 渲染子页面与语言切换
+- **静态拷贝**：单语言版可把 `dist/`（由 `npm run build:single` 生成）整体拷贝到任意静态服务器，`base: './'` 可挂任意子路径
 - **Docker（构建+部署一体）**：`docker compose up -d --build` → http://localhost:8080；支持挂载 config 卷热改配置（改 YAML 刷新即生效，无需重建镜像）。详见 [docs/DEPLOY-DOCKER.md](docs/DEPLOY-DOCKER.md)
 
 ### 两种打开方式都支持
 
 | 方式 | 配置来源 | 改配置是否需重新构建 |
 |------|---------|-------------------|
-| **双击 `dist/index.html`**（file://） | 构建时内嵌快照 | 需要（重新 `npm run build`） |
-| **HTTP 静态服务**（含文档站部署） | 运行时加载 `config/` 目录 | **不需要**（改 YAML 刷新即生效） |
+| **双击 `dist/index.html`**（file://，`build:single` 产物） | 构建时内嵌快照 | 需要（重新 `npm run build:single`） |
+| **HTTP 静态服务**（文档站 / 静态服务器部署） | 运行时加载 `config/` 目录 | **不需要**（改 YAML 刷新即生效） |
 
-构建时 `scripts/embed-config.mjs` 会把 `public/config/` 打成内嵌快照，运行时会优先 fetch `config/`，失败（file:// 或服务器缺目录）自动回退快照并给出控制台警告。
+构建时 `scripts/embed-config.mjs` 会把 `public/config/` 打成内嵌快照，运行时会优先 fetch `config/`，失败（file:// 或服务器缺目录）自动回退快照并给出控制台警告；双语产物由 `scripts/build-docs.mjs` 分别以 `VITE_WIZARD_LANG=zh/en` 构建。
 
 ## 配置数据（加配置不改代码）
 
@@ -60,7 +72,7 @@ npm run build      # 产出单文件 dist/index.html（自包含，双击即可�
 ```
 public/config/          # 全部配置数据（运行时加载）
 src/
-  App.vue / main.js / style.css   # 入口 + 全局样式（墨蓝 + 华为红设计语言）
+  App.vue / main.js / style.css   # 入口 + 全局样式（中性文档风 + 华为红强调）
   engine/               # 渲染引擎（条件 DSL / 模板 / YAML 引号 / 校验 / 配置加载）
   hooks/index.js        # 代码钩子注册表（逃生门，未注册的钩子引用会报配置错误）
   store.js              # 全局状态 + localStorage + 场景级联 + 双活配对管理

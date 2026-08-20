@@ -26,7 +26,7 @@
 | 访问方式 | 配置来源 | 改配置后 |
 |---|---|---|
 | `npm run dev` / HTTP 部署（含文档站） | 运行时 fetch `config/` 目录 | **刷新页面即生效，无需构建** |
-| 双击 `dist/index.html`（file://） | 构建时内嵌快照（`scripts/embed-config.mjs` 生成） | 需重新 `npm run build` |
+| 双击 `dist/index.html`（file://，`build:single` 产物） | 构建时内嵌快照（`scripts/embed-config.mjs` 生成） | 需重新 `npm run build:single` |
 
 - 配置**加载失败**（缺文件/网络）→ 自动回退内嵌快照 + 浏览器控制台警告
 - 配置**内容错误**（schema 校验失败 / 引用了未定义的字段或钩子）→ 页面显示"配置加载失败"并给出具体错误，**不静默回退**（这是真实配置问题，必须暴露）
@@ -417,7 +417,7 @@ npm test        # 前置会自动重新生成内嵌快照（pretest）
 | 给占位符手写引号 `qos: '{{sc.qos}}'` | 引号重复/内容损坏 | 用裸占位符 `qos: {{sc.qos}}`，引擎自动选引号 |
 | 新字段有 default 但没生效 | 已存在的后端/状态不追溯 | default 只在初始化/可见性切换时应用；清 localStorage 重试 |
 | 新协议下拉显示原始 id | i18n 缺 `protocol.<id>` | 补文案 |
-| 改了配置双击 dist 打开没变化 | file:// 用构建时快照 | 重新 `npm run build` |
+| 改了配置双击 dist 打开没变化 | file:// 用构建时快照 | 重新 `npm run build:single` |
 
 ---
 

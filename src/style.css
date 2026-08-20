@@ -1,24 +1,27 @@
 /* ============================================================
-   华为 CSI 配置向导 —— 设计系统
+   华为 CSI 配置向导 —— 设计系统（文档页嵌入版）
    ------------------------------------------------------------
-   身份：部署流水线 / 产物工作台（artifact workbench）。
-   向导是一条流水线：场景 → helm → oceanctl → kubectl → kubectl；
-   每一份输出都是一件"产物文件"，以文件卡片呈现。
+   身份：文档子页面 / 部署流水线产物工作台。
+   去掉独立站点的导航栏与页脚，由 Hugo/css-docs 文档站提供外层导航；
+   视觉上采用中性文档风：浅灰纸面、白卡片、深灰正文，
+   华为红仅用于主按钮、步骤激活、错误等必要强调。
 
    令牌：
-   - 墨色 #141b26 / 藏青 #1e2735 —— 结构与文字（取代 Docsy 的暖灰）
-   - 冷灰蓝纸面 #eef1f6 + 白卡片 —— 页面底色
-   - 华为红 #c7000b —— 唯一强调色（品牌事实：这是华为的工具）
+   - 浅灰纸面 #f7f8fa + 白卡片 #ffffff —— 页面底色（贴近 Docsy）
+   - 深灰文字 #1f2937 —— 正文与标题
+   - 华为红 #c7000b —— 唯一强调色（主按钮 / 错误 / 必要状态）
    - 绿 #1e7e34 —— 仅作"完成/通过"的功能色
-   - 等宽字体 —— 工程腔调：步骤号、工具名、文件名、YAML、命令、场景令牌
+   - 等宽字体 —— 工程腔调：步骤号、工具名、文件名、YAML、命令
    - 无外链字体：产物是单文件、可离线双击打开，且面向中国网络环境
    ============================================================ */
 
 :root {
-  --ink: #141b26;
-  --navy: #1e2735;
-  --paper: #eef1f6;
+  --ink: #1f2937;
+  --navy: #1f2937;
+  --paper: #f7f8fa;
   --card: #ffffff;
+
+  --link: #0d5bdd;
 
   --red: #c7000b;
   --red-hover: #a80009;
@@ -28,13 +31,13 @@
   --ok: #1e7e34;
   --ok-soft: #eef7f0;
 
-  --text: #242c3a;
-  --muted: #5c6572;
-  --line: #d6dce6;
-  --line-soft: #e8ecf2;
+  --text: #1f2937;
+  --muted: #5f6b7a;
+  --line: #e2e6ec;
+  --line-soft: #edf0f4;
 
-  --code-bg: #f6f8fb;
-  --code-text: #26303e;
+  --code-bg: #f3f5f8;
+  --code-text: #243244;
 
   --radius: 10px;
   --radius-sm: 8px;
@@ -72,14 +75,14 @@ body {
 }
 
 a {
-  color: var(--ink);
-  text-decoration: underline;
-  text-decoration-color: var(--line);
-  text-underline-offset: 3px;
+  color: var(--link);
+  text-decoration: none;
 }
 a:hover {
-  color: var(--red);
-  text-decoration-color: var(--red);
+  color: var(--link);
+  text-decoration: underline;
+  text-decoration-color: var(--link);
+  text-underline-offset: 3px;
 }
 
 .mono {
@@ -144,86 +147,42 @@ summary:focus-visible {
   color: var(--red);
 }
 
-/* ---------- 导航栏（墨色 + 顶部红标线） ---------- */
-.navbar {
-  background: var(--navy);
-  color: #fff;
-  border-top: 3px solid var(--red);
-}
-.navbar-inner {
+/* ---------- 文档页头部（无独立导航栏，正文页眉） ---------- */
+.doc-header {
   max-width: 1180px;
   margin: 0 auto;
-  padding: 0 16px;
-  height: 62px;
+  padding: 28px 16px 4px;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
-  gap: 16px;
-}
-.brand {
-  display: flex;
-  align-items: center;
   gap: 12px;
+  flex-wrap: wrap;
+}
+.doc-header-text {
   min-width: 0;
 }
-.logo {
-  flex-shrink: 0;
-  font-size: 16px;
-  line-height: 1;
-  color: #fff;
-  background: var(--red);
-  border-radius: 8px;
-  padding: 7px 9px;
-  font-family: var(--mono);
-}
-.brand h1 {
+.doc-header h1 {
   margin: 0;
-  font-size: 16.5px;
-  font-weight: 600;
-  letter-spacing: 0.2px;
-  white-space: nowrap;
+  font-size: 24px;
+  font-weight: 650;
+  letter-spacing: -0.2px;
+  color: var(--ink);
 }
-.navbar-sub {
-  margin: 1px 0 0;
-  font-size: 11.5px;
-  color: rgba(255, 255, 255, 0.62);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.doc-subtitle {
+  margin: 4px 0 0;
+  font-size: 13.5px;
 }
-.navbar-right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.reset-btn {
   flex-shrink: 0;
 }
-.badge {
-  display: inline-block;
-  border-radius: 5px;
-  padding: 1px 8px;
-  font-size: 11.5px;
-  font-weight: 600;
-  line-height: 1.7;
-}
-.badge-dark {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  color: #cdd6e2;
-  font-family: var(--mono);
-  font-weight: 500;
-  letter-spacing: 0.03em;
-}
-.btn.navbar-btn {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.32);
-  color: #dfe5ee;
-  padding: 5px 13px;
-  font-size: 12.5px;
-}
-.btn.navbar-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-  border-color: rgba(255, 255, 255, 0.6);
+@media (max-width: 720px) {
+  .doc-header {
+    padding-top: 20px;
+    align-items: flex-start;
+  }
+  .doc-subtitle {
+    font-size: 12.5px;
+  }
 }
 
 /* ---------- 步骤条：部署流水线 ----------
@@ -419,7 +378,7 @@ summary:focus-visible {
   align-items: center;
   gap: 8px;
   padding: 8px 10px;
-  background: #eef2f7;
+  background: var(--line-soft);
   border-bottom: 1px solid var(--line);
   flex-wrap: wrap;
 }
@@ -543,7 +502,7 @@ select:focus,
 textarea:focus {
   outline: none;
   border-color: var(--ink);
-  box-shadow: 0 0 0 3px rgba(20, 27, 38, 0.07);
+  box-shadow: 0 0 0 3px rgba(31, 41, 55, 0.07);
 }
 ::placeholder {
   color: #9aa3b0;
@@ -770,7 +729,7 @@ select {
 .field.q:focus-within {
   border-color: var(--ink);
   background: var(--card);
-  box-shadow: 0 0 0 3px rgba(20, 27, 38, 0.05);
+  box-shadow: 0 0 0 3px rgba(31, 41, 55, 0.05);
 }
 .q-num {
   font-family: var(--mono);
@@ -1003,24 +962,6 @@ select {
 .result-warning .btn:hover {
   border-color: var(--red);
   background: var(--card);
-}
-
-/* ---------- 页脚 ---------- */
-.foot {
-  max-width: 1180px;
-  margin: 6px auto 0;
-  padding: 20px 16px 28px;
-  font-size: 12px;
-  text-align: center;
-  border-top: 1px solid var(--line-soft);
-}
-.foot code {
-  font-family: var(--mono);
-  font-size: 11px;
-  background: var(--code-bg);
-  border: 1px solid var(--line-soft);
-  border-radius: 5px;
-  padding: 1px 6px;
 }
 
 /* ---------- toast ---------- */

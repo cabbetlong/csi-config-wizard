@@ -14,7 +14,8 @@ onMounted(async () => {
   try {
     const base = import.meta.env.BASE_URL || './'
     const config = await loadConfig(base)
-    store.value = createStore(config)
+    const language = import.meta.env.VITE_WIZARD_LANG || 'zh'
+    store.value = createStore(config, { language })
   } catch (e) {
     configError.value = e?.message || String(e)
   }

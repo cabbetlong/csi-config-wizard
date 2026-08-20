@@ -17,7 +17,7 @@ function artifactKey(id) {
   return { artifact: id.slice(0, dot), key: id.slice(dot + 1) }
 }
 
-export function createStore(config) {
+export function createStore(config, options = {}) {
   // ---------- 初始状态 ----------
   const firstFamily = config.families[0]
   const firstServiceType = firstFamily ? Object.keys(firstFamily.serviceTypes)[0] : null
@@ -47,7 +47,7 @@ export function createStore(config) {
   }
 
   const state = reactive({
-    language: saved.language ?? 'zh',
+    language: options.language || 'zh',
     scenario: {
       familyId: saved.scenario?.familyId ?? firstFamily?.id ?? null,
       serviceType: saved.scenario?.serviceType ?? firstServiceType,
